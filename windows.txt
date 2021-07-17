@@ -1,0 +1,105 @@
+array(50) {
+  ["ALLUSERSPROFILE"]=>
+  string(14) "C:\ProgramData"
+  ["APPDATA"]=>
+  string(30) "C:\Users\lucia\AppData\Roaming"
+  ["CommonProgramFiles"]=>
+  string(29) "C:\Program Files\Common Files"
+  ["CommonProgramFiles(x86)"]=>
+  string(35) "C:\Program Files (x86)\Common Files"
+  ["CommonProgramW6432"]=>
+  string(29) "C:\Program Files\Common Files"
+  ["COMPUTERNAME"]=>
+  string(15) "DESKTOP-E0TDLN3"
+  ["ComSpec"]=>
+  string(27) "C:\WINDOWS\system32\cmd.exe"
+  ["DriverData"]=>
+  string(38) "C:\Windows\System32\Drivers\DriverData"
+  ["FPS_BROWSER_APP_PROFILE_STRING"]=>
+  string(17) "Internet Explorer"
+  ["FPS_BROWSER_USER_PROFILE_STRING"]=>
+  string(7) "Default"
+  ["HOMEDRIVE"]=>
+  string(2) "C:"
+  ["HOMEPATH"]=>
+  string(12) "\Users\lucia"
+  ["LOCALAPPDATA"]=>
+  string(28) "C:\Users\lucia\AppData\Local"
+  ["LOGONSERVER"]=>
+  string(17) "\\DESKTOP-E0TDLN3"
+  ["NUMBER_OF_PROCESSORS"]=>
+  string(1) "8"
+  ["OneDrive"]=>
+  string(23) "C:\Users\lucia\OneDrive"
+  ["OneDriveConsumer"]=>
+  string(23) "C:\Users\lucia\OneDrive"
+  ["OS"]=>
+  string(10) "Windows_NT"
+  ["Path"]=>
+  string(681) "C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\wamp64\bin\php\php7.0.29;C:\Program Files\Java\jre1.8.0_181\bin;;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\lucia\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Java\jre1.8.0_181\bin"
+  ["PATHEXT"]=>
+  string(53) ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"
+  ["PROCESSOR_ARCHITECTURE"]=>
+  string(5) "AMD64"
+  ["PROCESSOR_IDENTIFIER"]=>
+  string(51) "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel"
+  ["PROCESSOR_LEVEL"]=>
+  string(1) "6"
+  ["PROCESSOR_REVISION"]=>
+  string(4) "9e09"
+  ["ProgramData"]=>
+  string(14) "C:\ProgramData"
+  ["ProgramFiles"]=>
+  string(16) "C:\Program Files"
+  ["ProgramFiles(x86)"]=>
+  string(22) "C:\Program Files (x86)"
+  ["ProgramW6432"]=>
+  string(16) "C:\Program Files"
+  ["PROMPT"]=>
+  string(4) "$P$G"
+  ["PSModulePath"]=>
+  string(93) "C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules"
+  ["PUBLIC"]=>
+  string(15) "C:\Users\Public"
+  ["SESSIONNAME"]=>
+  string(7) "Console"
+  ["SystemDrive"]=>
+  string(2) "C:"
+  ["SystemRoot"]=>
+  string(10) "C:\WINDOWS"
+  ["TEMP"]=>
+  string(33) "C:\Users\lucia\AppData\Local\Temp"
+  ["TMP"]=>
+  string(33) "C:\Users\lucia\AppData\Local\Temp"
+  ["USERDOMAIN"]=>
+  string(15) "DESKTOP-E0TDLN3"
+  ["USERDOMAIN_ROAMINGPROFILE"]=>
+  string(15) "DESKTOP-E0TDLN3"
+  ["USERNAME"]=>
+  string(5) "lucia"
+  ["USERPROFILE"]=>
+  string(14) "C:\Users\lucia"
+  ["windir"]=>
+  string(10) "C:\WINDOWS"
+  ["PHP_SELF"]=>
+  string(8) "test.php"
+  ["SCRIPT_NAME"]=>
+  string(8) "test.php"
+  ["SCRIPT_FILENAME"]=>
+  string(8) "test.php"
+  ["PATH_TRANSLATED"]=>
+  string(8) "test.php"
+  ["DOCUMENT_ROOT"]=>
+  string(0) ""
+  ["REQUEST_TIME_FLOAT"]=>
+  float(1625934616.98748)
+  ["REQUEST_TIME"]=>
+  int(1625934616)
+  ["argv"]=>
+  array(1) {
+    [0]=>
+    string(8) "test.php"
+  }
+  ["argc"]=>
+  int(1)
+}

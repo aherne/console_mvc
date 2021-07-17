@@ -1,0 +1,29 @@
+{
+    "name": "lucinda/console-mvc",
+    "type": "library",
+    "description": "Ultra high-performance API for handling console requests into responses via MVC pattern for PHP applications",
+    "keywords": ["mvc","servlets","event listeners","view resolvers", "STDOUT", "console", "terminal", "shell", "event handling"],
+    "homepage": "https://github.com/aherne/console-mvc",
+    "license": "MIT",
+    "require": {
+        "php": "^7.1",
+        "ext-simplexml": "*",
+        "lucinda/abstract_mvc": "^1.0"
+    },
+    "require-dev": {
+    	"lucinda/unit-testing": "^1.0"
+    },
+    "autoload": {
+    	"psr-4": {
+        	"Lucinda\\ConsoleSTDOUT\\": "src/",
+            "Test\\Lucinda\\ConsoleSTDOUT\\": "tests/"
+    	}
+    },
+    "authors": [
+        {
+            "name": "Lucian Popescu",
+            "email": "lucian.gabriel.popescu@gmail.com",
+            "role": "Developer"
+        }
+    ]
+}

@@ -1,0 +1,165 @@
+{
+    "packages": [
+        {
+            "name": "lucinda/abstract_mvc",
+            "version": "v1.1.2",
+            "version_normalized": "1.1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aherne/mvc.git",
+                "reference": "84fec069e08c163560970d9585dbd8c3093daad8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aherne/mvc/zipball/84fec069e08c163560970d9585dbd8c3093daad8",
+                "reference": "84fec069e08c163560970d9585dbd8c3093daad8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "lucinda/unit-testing": "^1.0"
+            },
+            "time": "2021-06-24T04:49:41+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Lucinda\\MVC\\": "src/",
+                    "Test\\Lucinda\\MVC\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lucian Popescu",
+                    "email": "lucian.gabriel.popescu@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Abstract MVC API to be extended based on STDIN type (url requests, exceptions)",
+            "keywords": [
+                "abstract",
+                "api",
+                "mvc"
+            ],
+            "support": {
+                "issues": "https://github.com/aherne/mvc/issues",
+                "source": "https://github.com/aherne/mvc/tree/v1.1.2"
+            },
+            "install-path": "../lucinda/abstract_mvc"
+        },
+        {
+            "name": "lucinda/console",
+            "version": "v1.0.2",
+            "version_normalized": "1.0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aherne/console_table.git",
+                "reference": "03a4200d8b9135cf21fb51cf764b4e6492ec4ba9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aherne/console_table/zipball/03a4200d8b9135cf21fb51cf764b4e6492ec4ba9",
+                "reference": "03a4200d8b9135cf21fb51cf764b4e6492ec4ba9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "time": "2021-06-24T05:32:52+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Lucinda\\Console\\": "src/",
+                    "Test\\Lucinda\\Console\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lucian Popescu",
+                    "email": "lucian.gabriel.popescu@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Lucinda Console Table: API able to draw tables in UNIX consoles or windows command prompt",
+            "keywords": [
+                "command prompt",
+                "tables",
+                "unix console"
+            ],
+            "support": {
+                "issues": "https://github.com/aherne/console_table/issues",
+                "source": "https://github.com/aherne/console_table/tree/v1.0.2"
+            },
+            "install-path": "../lucinda/console"
+        },
+        {
+            "name": "lucinda/unit-testing",
+            "version": "v1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aherne/unit-testing.git",
+                "reference": "5e78bd1ea59558dcba456a7a3b8ed45ae9cdb593"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aherne/unit-testing/zipball/5e78bd1ea59558dcba456a7a3b8ed45ae9cdb593",
+                "reference": "5e78bd1ea59558dcba456a7a3b8ed45ae9cdb593",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-pdo": "*",
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "lucinda/console": "~1.0",
+                "php": "^7.1"
+            },
+            "time": "2021-06-23T04:21:17+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Lucinda\\UnitTest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lucian Popescu",
+                    "email": "lucian.gabriel.popescu@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Lightweight PHP7.1 library for unit testing with zero dependencies",
+            "homepage": "https://github.com/aherne/unit-testing",
+            "keywords": [
+                "unit testing"
+            ],
+            "support": {
+                "issues": "https://github.com/aherne/unit-testing/issues",
+                "source": "https://github.com/aherne/unit-testing/tree/v1.2.0"
+            },
+            "install-path": "../lucinda/unit-testing"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": [
+        "lucinda/console",
+        "lucinda/unit-testing"
+    ]
+}

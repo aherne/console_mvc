@@ -1,0 +1,75 @@
+array(35) {
+  ["__CFBundleIdentifier"]=>
+  string(18) "com.apple.Terminal"
+  ["TMPDIR"]=>
+  string(49) "/var/folders/r9/gpl617cj6fzc16s6dnnck4sm0000gn/T/"
+  ["XPC_FLAGS"]=>
+  string(3) "0x0"
+  ["LaunchInstanceID"]=>
+  string(36) "3481517F-8E6C-4C64-85C4-D51DE1E248A4"
+  ["TERM"]=>
+  string(14) "xterm-256color"
+  ["SSH_AUTH_SOCK"]=>
+  string(51) "/private/tmp/com.apple.launchd.hYx2TCHYlN/Listeners"
+  ["SECURITYSESSIONID"]=>
+  string(5) "186a5"
+  ["XPC_SERVICE_NAME"]=>
+  string(1) "0"
+  ["TERM_PROGRAM"]=>
+  string(14) "Apple_Terminal"
+  ["TERM_PROGRAM_VERSION"]=>
+  string(3) "440"
+  ["TERM_SESSION_ID"]=>
+  string(36) "5BB3A940-2F41-404F-A254-A51E1FB89C3B"
+  ["SHELL"]=>
+  string(8) "/bin/zsh"
+  ["HOME"]=>
+  string(20) "/Users/lucianpopescu"
+  ["LOGNAME"]=>
+  string(13) "lucianpopescu"
+  ["USER"]=>
+  string(13) "lucianpopescu"
+  ["PATH"]=>
+  string(3189) "/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+  ["SHLVL"]=>
+  string(1) "1"
+  ["PWD"]=>
+  string(20) "/Users/lucianpopescu"
+  ["OLDPWD"]=>
+  string(20) "/Users/lucianpopescu"
+  ["HOMEBREW_PREFIX"]=>
+  string(13) "/opt/homebrew"
+  ["HOMEBREW_CELLAR"]=>
+  string(20) "/opt/homebrew/Cellar"
+  ["HOMEBREW_REPOSITORY"]=>
+  string(13) "/opt/homebrew"
+  ["MANPATH"]=>
+  string(2125) "/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man:/opt/homebrew/share/man::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+  ["INFOPATH"]=>
+  string(2125) "/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:"
+  ["_"]=>
+  string(21) "/opt/homebrew/bin/php"
+  ["__CF_USER_TEXT_ENCODING"]=>
+  string(13) "0x1F5:0x0:0x0"
+  ["PHP_SELF"]=>
+  string(8) "test.php"
+  ["SCRIPT_NAME"]=>
+  string(8) "test.php"
+  ["SCRIPT_FILENAME"]=>
+  string(8) "test.php"
+  ["PATH_TRANSLATED"]=>
+  string(8) "test.php"
+  ["DOCUMENT_ROOT"]=>
+  string(0) ""
+  ["REQUEST_TIME_FLOAT"]=>
+  float(1625935778.128929)
+  ["REQUEST_TIME"]=>
+  int(1625935778)
+  ["argv"]=>
+  array(1) {
+    [0]=>
+    string(8) "test.php"
+  }
+  ["argc"]=>
+  int(1)
+}
