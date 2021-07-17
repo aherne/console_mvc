@@ -13,22 +13,22 @@ abstract class Controller implements Runnable
      * @var Application
      */
     protected $application;
-    
+
     /**
      * @var Request
      */
     protected $request;
-    
+
     /**
      * @var Response
      */
     protected $response;
-    
+
     /**
      * @var Attributes
      */
     protected $attributes;
-        
+
     /**
      * Saves objects to be available in implemented run() methods.
      *

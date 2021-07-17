@@ -16,23 +16,23 @@ abstract class End implements Runnable
      * @var Attributes
      */
     protected $attributes;
-    
+
     /**
      * @var Application
      */
     protected $application;
-    
+
     /**
      * @var Request
      */
     protected $request;
-    
+
     /**
      * @var Response
      */
     protected $response;
-    
-    
+
+
     /**
      * Saves objects to be available in implemented run() methods.
      *

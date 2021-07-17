@@ -6,11 +6,11 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Test\\Lucinda\\STDOUT\\' => array($baseDir . '/tests'),
     'Test\\Lucinda\\MVC\\' => array($vendorDir . '/lucinda/abstract_mvc/tests'),
     'Test\\Lucinda\\Console\\' => array($vendorDir . '/lucinda/console/tests'),
+    'Test\\Lucinda\\ConsoleSTDOUT\\' => array($baseDir . '/tests'),
     'Lucinda\\UnitTest\\' => array($vendorDir . '/lucinda/unit-testing/src'),
-    'Lucinda\\STDOUT\\' => array($baseDir . '/src'),
     'Lucinda\\MVC\\' => array($vendorDir . '/lucinda/abstract_mvc/src'),
     'Lucinda\\Console\\' => array($vendorDir . '/lucinda/console/src'),
+    'Lucinda\\ConsoleSTDOUT\\' => array($baseDir . '/src'),
 );

@@ -9,24 +9,20 @@ class ComposerStaticInit4ecdf5c35e3f7f8981e11bc5a93537e1
     public static $prefixLengthsPsr4 = array (
         'T' => 
         array (
-            'Test\\Lucinda\\STDOUT\\' => 20,
             'Test\\Lucinda\\MVC\\' => 17,
             'Test\\Lucinda\\Console\\' => 21,
+            'Test\\Lucinda\\ConsoleSTDOUT\\' => 27,
         ),
         'L' => 
         array (
             'Lucinda\\UnitTest\\' => 17,
-            'Lucinda\\STDOUT\\' => 15,
             'Lucinda\\MVC\\' => 12,
             'Lucinda\\Console\\' => 16,
+            'Lucinda\\ConsoleSTDOUT\\' => 22,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Test\\Lucinda\\STDOUT\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/tests',
-        ),
         'Test\\Lucinda\\MVC\\' => 
         array (
             0 => __DIR__ . '/..' . '/lucinda/abstract_mvc/tests',
@@ -35,13 +31,13 @@ class ComposerStaticInit4ecdf5c35e3f7f8981e11bc5a93537e1
         array (
             0 => __DIR__ . '/..' . '/lucinda/console/tests',
         ),
+        'Test\\Lucinda\\ConsoleSTDOUT\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
+        ),
         'Lucinda\\UnitTest\\' => 
         array (
             0 => __DIR__ . '/..' . '/lucinda/unit-testing/src',
-        ),
-        'Lucinda\\STDOUT\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/src',
         ),
         'Lucinda\\MVC\\' => 
         array (
@@ -50,6 +46,10 @@ class ComposerStaticInit4ecdf5c35e3f7f8981e11bc5a93537e1
         'Lucinda\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/lucinda/console/src',
+        ),
+        'Lucinda\\ConsoleSTDOUT\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
         ),
     );
 

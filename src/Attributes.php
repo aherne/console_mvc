@@ -8,7 +8,7 @@ class Attributes
 {
     private $requestedRoute;
     private $requestedResponseFormat;
-    
+
     /**
      * Sets requested route detected by matching original requested to XML directives
      *
@@ -18,7 +18,7 @@ class Attributes
     {
         $this->requestedRoute = $route;
     }
-    
+
     /**
      * Gets requested route detected by matching original requested to XML directives
      *
@@ -29,7 +29,7 @@ class Attributes
     {
         return $this->requestedRoute;
     }
-    
+
     /**
      * Gets requested response format detected by matching original to XML directives
      *
@@ -39,7 +39,7 @@ class Attributes
     {
         $this->requestedResponseFormat = $format;
     }
-    
+
     /**
      * Gets requested response format detected by matching original requested to XML directives
      *

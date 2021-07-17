@@ -8,10 +8,10 @@ class UserInfo
 {
     private $name;
     private $isSuper = false;
-    
+
     /**
      * Detects info by operating system name
-     * 
+     *
      * @param string $operatingSystem
      */
     public function __construct(string $operatingSystem)
@@ -19,35 +19,34 @@ class UserInfo
         $this->setName();
         $this->setIsSuper($operatingSystem);
     }
-    
+
     /**
      * Detects running user name
      */
     private function setName(): void
     {
         if (function_exists("posix_getpwuid")) {
-            $processUser = posix_getpwuid(posix_geteuid());
-            $this->name = $processUser["name"];
-        } else if (!empty($_SESSION["USER"])) {
-            $this->name = $_SESSION["USER"];
+            $this->name = posix_getpwuid(posix_geteuid())["name"];
+        } elseif (!empty($_SERVER["USER"])) {
+            $this->name = $_SERVER["USER"];
         } else {
             $this->name = get_current_user();
         }
     }
-    
+
     /**
      * Gets name of user that runs API
-     * 
+     *
      * @return string
      */
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     /**
      * Checks if running user is root/superuser by operating system
-     * 
+     *
      * @param string $operatingSystem
      */
     private function setIsSuper(string $operatingSystem): void
@@ -61,10 +60,10 @@ class UserInfo
             $this->isSuper = ($this->name == "root");
         }
     }
-    
+
     /**
      * Gets if running user is root/superuser
-     * 
+     *
      * @return bool
      */
     public function isSuper(): bool

@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '6179975210f633e5f3e25a3ffe557aaa8dd00a8b',
+    'reference' => '5426cb88de35a3e485e5f44549ee1aaae254784b',
     'name' => 'lucinda/console-mvc',
   ),
   'versions' => 
@@ -36,7 +36,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '6179975210f633e5f3e25a3ffe557aaa8dd00a8b',
+      'reference' => '5426cb88de35a3e485e5f44549ee1aaae254784b',
     ),
     'lucinda/unit-testing' => 
     array (

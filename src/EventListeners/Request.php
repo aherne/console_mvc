@@ -14,18 +14,18 @@ abstract class Request implements Runnable
      * @var Attributes
      */
     protected $attributes;
-    
+
     /**
      * @var Application
      */
     protected $application;
-    
+
     /**
      * @var \Lucinda\ConsoleSTDOUT\Request
      */
     protected $request;
-    
-    
+
+
     /**
      * Saves objects to be available in implemented run() methods.
      *
@@ -38,7 +38,5 @@ abstract class Request implements Runnable
         $this->attributes = $attributes;
         $this->application = $application;
         $this->request = $request;
-        $this->session = $session;
-        $this->cookies = $cookies;
     }
 }

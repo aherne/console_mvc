@@ -1,2 +1,2 @@
-# console_mvc
-Console MVC API
+# MVC API for Console/Terminal PHP Applications
+

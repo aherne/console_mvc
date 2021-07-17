@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <application default_format="txt" default_route="index" version="1.0.0">
+    <paths views="tests/mocks/views"/>
+  </application>
+  <resolvers>
+    <resolver format="txt" content_type="text/plain" class="Test\Lucinda\ConsoleSTDOUT\mocks\ViewResolvers\Text" charset="UTF-8"/>
+  </resolvers>
+  <routes>
+  	<route id="index" controller="Test\Lucinda\ConsoleSTDOUT\mocks\Controllers\Index" view="index"/>
+  	<route id="test" controller="Test\Lucinda\ConsoleSTDOUT\mocks\Controllers\Test" view="test"/>
+  </routes>
+</xml>

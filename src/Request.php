@@ -24,31 +24,31 @@ class Request
         if (!isset($_SERVER["argv"])) {
             throw new ConfigurationException("API requires being called from console!");
         }
-        
+
         $this->setRoute();
         $this->setParameters();
         $this->setOperatingSystem();
         $this->setUserInfo();
     }
-    
+
     /**
      * Sets route requested from console
      */
     private function setRoute(): void
     {
-        $this->route = (isset($_SERVER["argv"][1])?$_SERVER["argv"][1]:"");
+        $this->route = (isset($_SERVER["argv"][1]) ? $_SERVER["argv"][1] : "");
     }
-    
+
     /**
      * Gets route requested from console
-     * 
+     *
      * @return string
      */
     public function getRoute(): string
     {
         return $this->route;
     }
-    
+
     /**
      * Sets parameters sent by client from console
      */
@@ -72,10 +72,10 @@ class Request
         if ($index == -1) {
             return $this->parameters;
         } else {
-            return (isset($this->parameters[$index])?$this->parameters[$index]:null);
+            return (isset($this->parameters[$index]) ? $this->parameters[$index] : null);
         }
     }
-    
+
     /**
      * Sets operating system API is running into
      */
@@ -83,17 +83,17 @@ class Request
     {
         $this->operatingSystem = php_uname("s");
     }
-    
+
     /**
      * Gets operating system name API is running into
-     * 
+     *
      * @return string
      */
     public function getOperatingSystem(): string
     {
         return $this->operatingSystem;
     }
-    
+
     /**
      * Sets info about user running API from terminal/shell
      */
@@ -101,10 +101,10 @@ class Request
     {
         $this->userInfo = new UserInfo($this->operatingSystem);
     }
-    
+
     /**
      * Gets info about user running API from terminal/shell
-     * 
+     *
      * @return UserInfo
      */
     public function getUserInfo(): UserInfo

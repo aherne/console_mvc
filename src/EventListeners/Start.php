@@ -13,8 +13,8 @@ abstract class Start implements Runnable
      * @var Attributes
      */
     protected $attributes;
-    
-    
+
+
     /**
      * Saves objects to be available in implemented run() methods.
      *

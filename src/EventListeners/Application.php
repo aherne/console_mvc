@@ -13,13 +13,13 @@ abstract class Application implements Runnable
      * @var Attributes
      */
     protected $attributes;
-    
+
     /**
      * @var \Lucinda\ConsoleSTDOUT\Application
      */
     protected $application;
-    
-    
+
+
     /**
      * Saves objects to be available in implemented run() methods.
      *

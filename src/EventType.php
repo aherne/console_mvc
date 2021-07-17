@@ -6,9 +6,9 @@ namespace Lucinda\ConsoleSTDOUT;
  */
 class EventType
 {
-    const START = "start";
-    const APPLICATION = "application";
-    const REQUEST = "request";
-    const RESPONSE = "response";
-    const END = "end";
+    public const START = "start";
+    public const APPLICATION = "application";
+    public const REQUEST = "request";
+    public const RESPONSE = "response";
+    public const END = "end";
 }
