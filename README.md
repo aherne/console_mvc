@@ -28,7 +28,7 @@ Table of contents:
 
 This API is a **skeleton** (requires [binding](#binding-points) by developers) created to efficiently handle console requests into server responses using a MVC version where views and models are expected to be independent while controllers mediate between the two based on user request. Designed with modularity, efficiency and simplicity at its foundation, API is both object and event oriented: similar to JavaScript, it allows developers to bind logic that will be executed when predefined events are reached while handling.
 
-![diagram](https://www.lucinda-framework.com/stdout-mvc-api.svg)
+![diagram](https://www.lucinda-framework.com/console-mvc-api.svg)
 
 API does nothing more than standard MVC logic, so it may need a framework to be built on top to add further features (eg: DB connectivity). In order to use it, following steps are required from developers:
 
@@ -152,7 +152,7 @@ As mentioned above, API allows developers to bind listeners to handling lifecycl
 | --- | --- | --- |
 | START | [EventListeners\Start](#abstract-class-eventlisteners-start) | Ran before [configuration](#configuration) XML is read |
 | APPLICATION | [EventListeners\Application](#abstract-class-eventlisteners-application) | Ran after [configuration](#configuration) XML is read into [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) |
-| REQUEST | [EventListeners\Request](#abstract-class-eventlisteners-request) | Ran after user request is read into [Request](#class-request), [Session](#class-session) and [Cookies](#class-cookies) objects |
+| REQUEST | [EventListeners\Request](#abstract-class-eventlisteners-request) | Ran after user request is read into [Request](#class-request) object |
 | RESPONSE | [EventListeners\Response](#abstract-class-eventlisteners-response) | Ran after [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) body is compiled but before it's rendered |
 | END | [EventListeners\End](#abstract-class-eventlisteners-end) | Ran after [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) was rendered back to caller  |
 
@@ -301,7 +301,7 @@ TODO: usage example
 
 ### Abstract Class EventListeners Request
 
-Abstract class [EventListeners\Request](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Request.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [Request](#class-request), [Session](#class-session) and [Cookies](#class-cookies) objects are created.
+Abstract class [EventListeners\Request](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Request.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [Request](#class-request) object is created.
 
 Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
 
