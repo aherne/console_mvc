@@ -19,10 +19,7 @@ Table of contents:
     - [How Are View Resolvers Located](#how-are-view-resolvers-located)
     - [How Is Route Detected](#how-is-route-detected)
     - [How Are Controllers Located](#how-are-controllers-located)
-    - [How Are Parameter Validators Working](#how-are-parameter-validators-working)
-    - [How to Set Cookies Path and Domain](#how-to-set-cookies-path-and-domain)
-    - [How Are Uploaded Files Processed](#how-are-uploaded-files-processed)
-    - [How Is Requested URI Processed](#how-is-requested-uri-processed)
+    - [How Are Request Parameters Detected](#how-are-request-parameters-detected)
     - [How Are Views Located](#how-are-views-located)
 
 ## About
