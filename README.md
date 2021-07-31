@@ -11,6 +11,7 @@ Table of contents:
     - [Configuring Shared Variables](#configuring-shared-variables)
     - [Handling](#handling)
 - [Installation](#installation)
+- [Running Requests](#running-requests)
 - [Unit Tests](#unit-tests)
 - [Reference Guide](#reference-guide)
 - [Specifications](#specifications)
@@ -42,7 +43,7 @@ API does nothing more than standard MVC logic, so it may need a framework to be 
 API is fully PSR-4 compliant, only requiring [Abstract MVC API](https://github.com/aherne/mvc) for basic MVC logic, PHP7.1+ interpreter and SimpleXML extension. To quickly see how it works, check:
 
 - **[installation](#installation)**: describes how to install API on your computer, in light of steps above
-- **[execution](#execution)**: describes how to use installed and configured API to handle console requests
+- **[running requests](#running-requests)**: describes how to use installed and configured API to run console requests
 - **[reference guide](#reference-guide)**: describes all API classes, methods and fields relevant to developers
 - **[unit tests](#unit-tests)**: API has 100% Unit Test coverage, using [UnitTest API](https://github.com/aherne/unit-testing) instead of PHPUnit for greater flexibility
 - **[example](https://github.com/aherne/console-mvc/blob/master/tests/FrontController.php)**: shows a deep example of API functionality based on [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php) unit test
@@ -209,7 +210,7 @@ $controller = new Lucinda\ConsoleSTDOUT\FrontController("configuration.xml", new
 $controller->run();
 ```
 
-## Execution
+## Running Requests
 
 Now that you have installed project on your machine, go to DESTINATION_FOLDER, open console/terminal and write:
 
