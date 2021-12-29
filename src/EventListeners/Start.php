@@ -9,11 +9,7 @@ use Lucinda\ConsoleSTDOUT\Attributes;
  */
 abstract class Start implements Runnable
 {
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
-
+    protected Attributes $attributes;
 
     /**
      * Saves objects to be available in implemented run() methods.

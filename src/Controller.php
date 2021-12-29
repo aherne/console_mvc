@@ -9,25 +9,10 @@ use Lucinda\MVC\Response;
  */
 abstract class Controller implements Runnable
 {
-    /**
-     * @var Application
-     */
-    protected $application;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
+    protected Application $application;
+    protected Request $request;
+    protected Response $response;
+    protected Attributes $attributes;
 
     /**
      * Saves objects to be available in implemented run() methods.

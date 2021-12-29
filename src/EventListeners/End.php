@@ -12,26 +12,10 @@ use Lucinda\MVC\Response;
  */
 abstract class End implements Runnable
 {
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
-
-    /**
-     * @var Application
-     */
-    protected $application;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
+    protected Attributes $attributes;
+    protected Application $application;
+    protected Request $request;
+    protected Response $response;
 
     /**
      * Saves objects to be available in implemented run() methods.

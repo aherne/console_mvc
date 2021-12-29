@@ -11,26 +11,10 @@ use Lucinda\ConsoleSTDOUT\Request;
  */
 abstract class Response implements Runnable
 {
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
-
-    /**
-     * @var Application
-     */
-    protected $application;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var \Lucinda\MVC\Response
-     */
-    protected $response;
-
+    protected Attributes $attributes;
+    protected Application $application;
+    protected Request $request;
+    protected \Lucinda\MVC\Response $response;
 
     /**
      * Saves objects to be available in implemented run() methods.

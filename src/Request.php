@@ -9,10 +9,10 @@ use Lucinda\ConsoleSTDOUT\Request\UserInfo;
  */
 class Request
 {
-    private $route;
-    private $parameters = array();
-    private $operatingSystem;
-    private $userInfo;
+    private string $route;
+    private array $parameters = array();
+    private string $operatingSystem;
+    private UserInfo $userInfo;
 
     /**
      * Detects all aspects of a request.
@@ -36,7 +36,7 @@ class Request
      */
     private function setRoute(): void
     {
-        $this->route = (isset($_SERVER["argv"][1]) ? $_SERVER["argv"][1] : "");
+        $this->route = ($_SERVER["argv"][1] ?? "");
     }
 
     /**
@@ -72,7 +72,7 @@ class Request
         if ($index == -1) {
             return $this->parameters;
         } else {
-            return (isset($this->parameters[$index]) ? $this->parameters[$index] : null);
+            return ($this->parameters[$index] ?? null);
         }
     }
 

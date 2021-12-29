@@ -6,8 +6,8 @@ namespace Lucinda\ConsoleSTDOUT;
  */
 class Attributes
 {
-    private $requestedRoute;
-    private $requestedResponseFormat;
+    private string $requestedRoute;
+    private string $requestedResponseFormat;
 
     /**
      * Sets requested route detected by matching original requested to XML directives

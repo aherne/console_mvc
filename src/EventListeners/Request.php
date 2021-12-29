@@ -10,21 +10,9 @@ use Lucinda\MVC\Runnable;
  */
 abstract class Request implements Runnable
 {
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
-
-    /**
-     * @var Application
-     */
-    protected $application;
-
-    /**
-     * @var \Lucinda\ConsoleSTDOUT\Request
-     */
-    protected $request;
-
+    protected Attributes $attributes;
+    protected Application $application;
+    protected \Lucinda\ConsoleSTDOUT\Request $request;
 
     /**
      * Saves objects to be available in implemented run() methods.

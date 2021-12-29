@@ -11,6 +11,7 @@ class RequestValidator extends Request
 {
     /**
      * Performs request validation
+     * @throws RouteNotFoundException|ConfigurationException
      */
     public function run(): void
     {

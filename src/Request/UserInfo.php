@@ -6,8 +6,8 @@ namespace Lucinda\ConsoleSTDOUT\Request;
  */
 class UserInfo
 {
-    private $name;
-    private $isSuper = false;
+    private string $name;
+    private bool $isSuper = false;
 
     /**
      * Detects info by operating system name
@@ -51,9 +51,9 @@ class UserInfo
      */
     private function setIsSuper(string $operatingSystem): void
     {
-        if (stripos($operatingSystem, "win")!==false) {
+        if (str_contains(strtolower($operatingSystem), "win")) {
             $result = shell_exec("net session");
-            if (strpos($result, "Access is denied.")===false) {
+            if (!str_contains($result, "Access is denied.")) {
                 $this->isSuper = true;
             }
         } else {

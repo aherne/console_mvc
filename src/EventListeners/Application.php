@@ -9,15 +9,8 @@ use Lucinda\MVC\Runnable;
  */
 abstract class Application implements Runnable
 {
-    /**
-     * @var Attributes
-     */
-    protected $attributes;
-
-    /**
-     * @var \Lucinda\ConsoleSTDOUT\Application
-     */
-    protected $application;
+    protected Attributes $attributes;
+    protected \Lucinda\ConsoleSTDOUT\Application $application;
 
 
     /**
