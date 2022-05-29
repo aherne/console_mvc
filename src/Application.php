@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT;
 
 use Lucinda\MVC\ConfigurationException;

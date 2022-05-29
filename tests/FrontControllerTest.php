@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\ConsoleSTDOUT;
 
 use Test\Lucinda\ConsoleSTDOUT\mocks\TestAttributes;

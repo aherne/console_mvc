@@ -1,15 +1,19 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT;
 
 use Lucinda\MVC\ConfigurationException;
 use Lucinda\ConsoleSTDOUT\Request\UserInfo;
 
 /**
- * Detects information about request from $_SERVER, $_GET, $_POST, $_FILES. Once detected, parameters are immutable.
+ * Detects information about request from $_SERVER (mainly). Once detected, parameters are immutable.
  */
 class Request
 {
     private string $route;
+    /**
+     * @var string[]
+     */
     private array $parameters = array();
     private string $operatingSystem;
     private UserInfo $userInfo;
@@ -21,22 +25,25 @@ class Request
      */
     public function __construct()
     {
-        if (!isset($_SERVER["argv"])) {
+        $server = $_SERVER;
+        if (!isset($server["argv"])) {
             throw new ConfigurationException("API requires being called from console!");
         }
 
-        $this->setRoute();
-        $this->setParameters();
+        $this->setRoute($server);
+        $this->setParameters($server);
         $this->setOperatingSystem();
-        $this->setUserInfo();
+        $this->setUserInfo($server);
     }
 
     /**
      * Sets route requested from console
+     *
+     * @param array<string,mixed> $server
      */
-    private function setRoute(): void
+    private function setRoute(array $server): void
     {
-        $this->route = ($_SERVER["argv"][1] ?? "");
+        $this->route = ($server["argv"][1] ?? "");
     }
 
     /**
@@ -51,10 +58,12 @@ class Request
 
     /**
      * Sets parameters sent by client from console
+     *
+     * @param array<string,mixed> $server
      */
-    private function setParameters(): void
+    private function setParameters(array $server): void
     {
-        foreach ($_SERVER["argv"] as $i=>$value) {
+        foreach ($server["argv"] as $i=>$value) {
             if ($i>1) {
                 $this->parameters[] = $value;
             }
@@ -64,7 +73,7 @@ class Request
     /**
      * Gets request parameters detected by optional position
      *
-     * @param integer $name
+     * @param integer $index
      * @return string[]|string|null
      */
     public function parameters(int $index=-1)
@@ -96,10 +105,12 @@ class Request
 
     /**
      * Sets info about user running API from terminal/shell
+     *
+     * @param array<string,mixed> $server
      */
-    private function setUserInfo(): void
+    private function setUserInfo(array $server): void
     {
-        $this->userInfo = new UserInfo($this->operatingSystem);
+        $this->userInfo = new UserInfo($this->operatingSystem, $server);
     }
 
     /**

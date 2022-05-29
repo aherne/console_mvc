@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT\Request;
 
 /**
@@ -13,22 +14,23 @@ class UserInfo
      * Detects info by operating system name
      *
      * @param string $operatingSystem
+     * @param array<string,mixed> $server
      */
-    public function __construct(string $operatingSystem)
+    public function __construct(string $operatingSystem, array $server)
     {
-        $this->setName();
+        $this->setName($server);
         $this->setIsSuper($operatingSystem);
     }
 
     /**
      * Detects running user name
      */
-    private function setName(): void
+    private function setName(array $server): void
     {
         if (function_exists("posix_getpwuid")) {
             $this->name = posix_getpwuid(posix_geteuid())["name"];
-        } elseif (!empty($_SERVER["USER"])) {
-            $this->name = $_SERVER["USER"];
+        } elseif (!empty($server["USER"])) {
+            $this->name = $server["USER"];
         } else {
             $this->name = get_current_user();
         }

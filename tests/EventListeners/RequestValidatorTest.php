@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\ConsoleSTDOUT\EventListeners;
 
 use Lucinda\ConsoleSTDOUT\EventListeners\RequestValidator;

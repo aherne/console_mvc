@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT\EventListeners;
 
 use Lucinda\ConsoleSTDOUT\Attributes;
@@ -19,8 +20,10 @@ abstract class Application implements Runnable
      * @param Attributes $attributes
      * @param \Lucinda\ConsoleSTDOUT\Application $application
      */
-    public function __construct(Attributes $attributes, \Lucinda\ConsoleSTDOUT\Application $application)
-    {
+    public function __construct(
+        Attributes $attributes,
+        \Lucinda\ConsoleSTDOUT\Application $application
+    ) {
         $this->application = $application;
         $this->attributes = $attributes;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT\EventListeners;
 
 use Lucinda\ConsoleSTDOUT\RouteNotFoundException;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT;
 
 use Lucinda\MVC\Runnable;
@@ -13,6 +14,9 @@ class FrontController implements Runnable
 {
     private string $documentDescriptor;
     private Attributes $attributes;
+    /**
+     * @var array<string,string[]>
+     */
     private array $events = [];
 
     /**
@@ -49,7 +53,8 @@ class FrontController implements Runnable
     }
 
     /**
-     * Performs all steps required to convert request to response in procedural mode, while delegating to subcomponents, to maximize performance
+     * Performs all steps required to convert request to response in procedural mode, while delegating to subcomponents,
+     * to maximize performance
      *
      * @throws ConfigurationException If any other situation where execution cannot continue.
      */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT\EventListeners;
 
 use Lucinda\ConsoleSTDOUT\Application;
@@ -21,8 +22,11 @@ abstract class Request implements Runnable
      * @param Application $application
      * @param \Lucinda\ConsoleSTDOUT\Request $request
      */
-    public function __construct(Attributes $attributes, Application $application, \Lucinda\ConsoleSTDOUT\Request $request)
-    {
+    public function __construct(
+        Attributes $attributes,
+        Application $application,
+        \Lucinda\ConsoleSTDOUT\Request $request
+    ) {
         $this->attributes = $attributes;
         $this->application = $application;
         $this->request = $request;

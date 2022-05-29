@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\ConsoleSTDOUT\Request;
 
 use Lucinda\ConsoleSTDOUT\Request\UserInfo;
@@ -10,7 +11,7 @@ class UserInfoTest
 
     public function __construct()
     {
-        $this->object = new UserInfo(PHP_OS);
+        $this->object = new UserInfo(PHP_OS, ["USER"=>"tester"]);
     }
 
     public function getName()

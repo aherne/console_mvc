@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\ConsoleSTDOUT\EventListeners;
 
 use Lucinda\MVC\Runnable;
@@ -25,8 +26,12 @@ abstract class End implements Runnable
      * @param Request $request
      * @param Response $response
      */
-    public function __construct(Attributes $attributes, Application $application, Request $request, Response $response)
-    {
+    public function __construct(
+        Attributes $attributes,
+        Application $application,
+        Request $request,
+        Response $response
+    ) {
         $this->attributes = $attributes;
         $this->application = $application;
         $this->request = $request;

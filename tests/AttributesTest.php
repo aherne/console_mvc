@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\ConsoleSTDOUT;
 
 use Lucinda\UnitTest\Result;

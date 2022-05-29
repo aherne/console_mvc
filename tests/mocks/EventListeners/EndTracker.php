@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\ConsoleSTDOUT\mocks\EventListeners;
 
 use Lucinda\ConsoleSTDOUT\EventListeners\End;
