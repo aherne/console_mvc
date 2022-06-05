@@ -16,7 +16,7 @@ class Text extends ViewResolver
 
             ob_start();
             $_VIEW = $view->getData();
-            require($view->getFile().".txt");
+            include $view->getFile().".txt";
             $output = ob_get_contents();
             ob_end_clean();
 

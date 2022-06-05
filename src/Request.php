@@ -73,7 +73,7 @@ class Request
     /**
      * Gets request parameters detected by optional position
      *
-     * @param integer $index
+     * @param  integer $index
      * @return string[]|string|null
      */
     public function parameters(int $index=-1)

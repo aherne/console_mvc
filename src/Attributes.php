@@ -24,7 +24,7 @@ class Attributes
      * Gets requested route detected by matching original requested to XML directives
      *
      * @example UsersSync
-     * @return string
+     * @return  string
      */
     public function getValidRoute(): string
     {
@@ -45,7 +45,7 @@ class Attributes
      * Gets requested response format detected by matching original requested to XML directives
      *
      * @example text
-     * @return string
+     * @return  string
      */
     public function getValidFormat(): string
     {

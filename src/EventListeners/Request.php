@@ -18,8 +18,8 @@ abstract class Request implements Runnable
     /**
      * Saves objects to be available in implemented run() methods.
      *
-     * @param Attributes $attributes
-     * @param Application $application
+     * @param Attributes                     $attributes
+     * @param Application                    $application
      * @param \Lucinda\ConsoleSTDOUT\Request $request
      */
     public function __construct(

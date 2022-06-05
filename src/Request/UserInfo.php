@@ -13,7 +13,7 @@ class UserInfo
     /**
      * Detects info by operating system name
      *
-     * @param string $operatingSystem
+     * @param string              $operatingSystem
      * @param array<string,mixed> $server
      */
     public function __construct(string $operatingSystem, array $server)
