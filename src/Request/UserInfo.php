@@ -53,7 +53,7 @@ class UserInfo
      */
     private function setIsSuper(string $operatingSystem): void
     {
-        if (str_starts_with(strtolower($operatingSystem), "win")===0) {
+        if (stripos($operatingSystem, "win")===0) {
             $result = shell_exec("net session");
             if (!str_contains($result, "Access is denied.")) {
                 $this->isSuper = true;
