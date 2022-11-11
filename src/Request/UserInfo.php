@@ -55,7 +55,7 @@ class UserInfo
     {
         if (stripos($operatingSystem, "win")===0) {
             $result = (string) shell_exec("net session");
-            if (!str_contains($result, "Access is denied.")) {
+            if ($result && !str_contains($result, "Access is denied.")) {
                 $this->isSuper = true;
             }
         } else {
