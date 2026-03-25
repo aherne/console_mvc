@@ -4,11 +4,12 @@ namespace Lucinda\ConsoleSTDOUT;
 
 use Lucinda\MVC\ConfigurationException;
 use Lucinda\ConsoleSTDOUT\Request\UserInfo;
+use Lucinda\MVC\Facet;
 
 /**
  * Detects information about request from $_SERVER (mainly). Once detected, parameters are immutable.
  */
-class Request
+class Request implements Facet
 {
     private string $route;
     /**

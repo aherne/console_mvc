@@ -3,21 +3,30 @@
 namespace Lucinda\ConsoleSTDOUT;
 
 use Lucinda\MVC\Runnable;
-use Lucinda\MVC\Response;
-use Lucinda\MVC\ConfigurationException;
-use Lucinda\MVC\Application\Format;
+use Lucinda\MVC\Response\View;
+use Lucinda\MVC\EventScheduler;
+use Lucinda\MVC\EventType;
+use Lucinda\MVC\FacetRegistry;
+use Lucinda\MVC\ReflectionInjector;
+use Lucinda\MVC\TerminationException;
+use Lucinda\ConsoleSTDOUT\Request\Validator as ValidatedRequest;
+use Lucinda\MVC\Controller\ViewAware;
+use Lucinda\MVC\EventListener\Faceted;
+use Lucinda\MVC\EventListener\MultiFaceted;
+use Lucinda\MVC\Response\Transformer\Body as TransformerBody;
+use Lucinda\MVC\Service\ResolverInfoDetector;
+use Lucinda\MVC\Service\ViewDetector;
+use Lucinda\MVC\Facets\ResolverInfo;
 
 /**
  * Implements STDOUT front controller MVC functionality, integrating all API components as a whole.
  */
 class FrontController implements Runnable
 {
-    private string $documentDescriptor;
-    private Attributes $attributes;
-    /**
-     * @var array<string,string[]>
-     */
-    private array $events = [];
+    protected string $documentDescriptor;
+    protected FacetRegistry $facetRegistry;
+    protected ReflectionInjector $reflectionInjector;
+    protected EventScheduler $eventScheduler;
 
     /**
      * Starts API front controller, setting up necessary variables
@@ -25,120 +34,147 @@ class FrontController implements Runnable
      * @param Attributes $attributes
      * @param string     $documentDescriptor
      */
-    public function __construct(string $documentDescriptor, Attributes $attributes)
+    public function __construct(
+        string $documentDescriptor,
+        EventScheduler $eventScheduler
+    )
     {
         // saves arguments
         $this->documentDescriptor = $documentDescriptor;
-        $this->attributes = $attributes;
-
-        // initialize events
-        $this->events = [
-            EventType::START->value=>[],
-            EventType::APPLICATION->value=>[],
-            EventType::REQUEST->value=>["\\Lucinda\\ConsoleSTDOUT\\EventListeners\\RequestValidator"],
-            EventType::RESPONSE->value=>[],
-            EventType::END->value=>[]
-        ];
-    }
-
-    /**
-     * Adds an event listener
-     *
-     * @param EventType $type      One of EventType enum values
-     * @param string    $className Name of event listener class (including namespace and subfolder, if any)
-     */
-    public function addEventListener(EventType $type, string $className): void
-    {
-        $this->events[$type->value][] = $className;
+        $this->facetRegistry = new FacetRegistry();
+        $this->reflectionInjector = new ReflectionInjector($this->facetRegistry);
+        $this->eventScheduler = $eventScheduler;
     }
 
     /**
      * Performs all steps required to convert request to response in procedural mode, while delegating to subcomponents,
      * to maximize performance
-     *
-     * @throws ConfigurationException If any other situation where execution cannot continue.
      */
     public function run(): void
     {
-        // execute events for START
-        foreach ($this->events[EventType::START->value] as $className) {
-            $runnable = new $className($this->attributes);
-            $runnable->run();
-        }
+        try {
+            // execute events for START
+            $this->runEvents(EventType::START);
 
-        // reads XML configuration file
-        $application = new Application($this->documentDescriptor);
+            // reads XML configuration file
+            $application = new Application($this->documentDescriptor);
+            $this->facetRegistry->put($application->getApplicationInfo());
 
-        // execute events for APPLICATION
-        foreach ($this->events[EventType::APPLICATION->value] as $className) {
-            $runnable = new $className($this->attributes, $application);
-            $runnable->run();
-        }
+            // execute events for APPLICATION
+            $this->runEvents(EventType::APPLICATION);
 
-        // reads user request, into request (RO), session (RW) and cookies (RW) objects
-        $request = new Request();
+            // reads user request, into request (RO) object
+            $request = new Request();
+            $this->facetRegistry->put($request);
 
-        // execute events for REQUEST
-        foreach ($this->events[EventType::REQUEST->value] as $className) {
-            $runnable = new $className($this->attributes, $application, $request);
-            $runnable->run();
-        }
+            // validate request
+            $requestValidator = new ValidatedRequest($application, $request);
+            $this->facetRegistry->put($requestValidator);
 
-        // initializes response
-        $format = $application->resolvers($this->attributes->getValidFormat());
-        $response = new Response($this->getContentType($format), $this->getTemplateFile($application));
+            // execute events for REQUEST
+            $this->runEvents(EventType::REQUEST);
 
-        // locates and runs page controller
-        $className  = $application->routes($this->attributes->getValidRoute())->getController();
-        if ($className) {
-            $runnable = new $className($this->attributes, $application, $request, $response);
-            $runnable->run();
-        }
+            // determine response format
+            $responseInfoDetector = new ResolverInfoDetector($application, $requestValidator);
+            $response = new Response();
 
-        // resolves view into response body, unless output stream has been written to already
-        if ($response->getBody()===null) {
-            $className  = $format->getViewResolver();
-            $runnable = new $className($application, $response);
-            $runnable->run();
-        }
+            // locates and runs page controller and sets up view
+            $filledView = $this->runController($application, $requestValidator);
+            $viewDetector = new ViewDetector($application, $requestValidator, $filledView);
+            $view = $viewDetector->getView();
 
-        // execute events for RESPONSE
-        foreach ($this->events[EventType::RESPONSE->value] as $className) {
-            $runnable = new $className($this->attributes, $application, $request, $response);
-            $runnable->run();
-        }
+            // resolves view into response body, unless output stream has been written to already
+            $this->runViewResolver($responseInfoDetector->getResolver(), $response, $view);
 
-        // commits response to caller
-        $response->commit();
+            // execute events for RESPONSE
+            $this->runResponseTransformers($response);
 
-        // execute events for END
-        foreach ($this->events[EventType::END->value] as $className) {
-            $runnable = new $className($this->attributes, $application, $request, $response);
-            $runnable->run();
+            // commits response to caller
+            $response->run();
+
+            // execute events for END            
+            $this->runEvents(EventType::END);
+        } catch (TerminationException $e) {
+            $e->getResponse()->run();
         }
     }
 
     /**
-     * Gets response template file
+     * Executes all event listeners set to be run before any handling of request
      *
-     * @param  Application $application
-     * @return string
+     * @return void
      */
-    private function getTemplateFile(Application $application): string
+    protected function runEvents(EventType $eventType): void
     {
-        $template = $application->routes($this->attributes->getValidRoute())->getView();
-        return ($template ? $application->getViewsPath()."/".$template : "");
+        $eventsToRun = $this->eventScheduler->get($eventType);      
+        foreach ($eventsToRun as $className) {
+            $object = $this->reflectionInjector->create($className);
+            if ($object instanceof Faceted) {
+                $this->facetRegistry->put($object->run());
+            } else if ($object instanceof MultiFaceted) {
+                $facets = $object->run();
+                foreach ($facets as $id=>$facet) {
+                    $this->facetRegistry->putAs($id, $facet);
+                }
+            } else {
+                $object->run();
+            }
+        }
     }
 
     /**
-     * Gets response content type
-     *
-     * @param  Format $format
-     * @return string
+     * Executes all response listeners that in turn transform the response
+     * 
+     * @param Response $response
      */
-    private function getContentType(Format $format): string
+    protected function runResponseTransformers(Response $response): void
     {
-        $charset = $format->getCharacterEncoding();
-        return $format->getContentType().($charset ? "; charset=".$charset : "");
+        $eventsToRun = $this->eventScheduler->get(EventType::RESPONSE);
+        foreach ($eventsToRun as $className) {
+            $object = $this->reflectionInjector->create($className);
+            if ($object instanceof TransformerBody) {
+                $response->transformBody($object);
+            }
+        }
+    }
+
+    /**
+     * Detects and executes page controller, if any
+     *
+     * @param Application $application
+     * @param ValidatedRequest $validatedRequest
+     * @return ?View
+     */
+    protected function runController(
+        Application $application,
+        ValidatedRequest $validatedRequest
+    ): ?View
+    {
+        if ($className  = $application->getRoutes($validatedRequest->getRoute())->getController()) {
+            $object = $this->reflectionInjector->create($className);
+            if ($object instanceof ViewAware) {
+                return $object->run();
+            } else {
+                $object->run();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Detects resolver to compile view into response body, if not already written
+     *
+     * @param ResolverInfo $resolverInfo
+     * @param HttpResponse $response
+     * @param View $view
+     * @return void
+     */
+    protected function runViewResolver(
+        ResolverInfo $resolverInfo,
+        Response $response,
+        View $view
+    ): void {
+        $resolver = $this->reflectionInjector->create($resolverInfo->getViewResolver());
+        $response->resolve($view, $resolver);
     }
 }

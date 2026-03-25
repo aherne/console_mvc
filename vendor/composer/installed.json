@@ -1,14 +1,9 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "abe33e83ba1abe70268f5391d33efd0b",
     "packages": [
         {
             "name": "lucinda/abstract_mvc",
             "version": "v3.0.11",
+            "version_normalized": "3.0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aherne/mvc.git",
@@ -26,7 +21,9 @@
             "require-dev": {
                 "lucinda/unit-testing": "^2.0"
             },
+            "time": "2026-03-25T06:58:02+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Lucinda\\MVC\\": "src/",
@@ -54,13 +51,12 @@
                 "issues": "https://github.com/aherne/mvc/issues",
                 "source": "https://github.com/aherne/mvc/tree/v3.0.11"
             },
-            "time": "2026-03-25T06:58:02+00:00"
-        }
-    ],
-    "packages-dev": [
+            "install-path": "../lucinda/abstract_mvc"
+        },
         {
             "name": "lucinda/console",
             "version": "v2.0.5",
+            "version_normalized": "2.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aherne/console.git",
@@ -75,7 +71,9 @@
             "require": {
                 "php": "^8.1"
             },
+            "time": "2022-12-25T17:58:22+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Lucinda\\Console\\": "src/",
@@ -103,11 +101,12 @@
                 "issues": "https://github.com/aherne/console/issues",
                 "source": "https://github.com/aherne/console/tree/v2.0.5"
             },
-            "time": "2022-12-25T17:58:22+00:00"
+            "install-path": "../lucinda/console"
         },
         {
             "name": "lucinda/unit-testing",
             "version": "v2.0.4",
+            "version_normalized": "2.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aherne/unit-testing.git",
@@ -127,7 +126,9 @@
                 "lucinda/console": "~2.0",
                 "php": "^8.1"
             },
+            "time": "2026-01-16T16:21:42+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Lucinda\\UnitTest\\": "src/"
@@ -153,18 +154,12 @@
                 "issues": "https://github.com/aherne/unit-testing/issues",
                 "source": "https://github.com/aherne/unit-testing/tree/v2.0.4"
             },
-            "time": "2026-01-16T16:21:42+00:00"
+            "install-path": "../lucinda/unit-testing"
         }
     ],
-    "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": {
-        "php": "^8.1",
-        "ext-simplexml": "*"
-    },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "dev": true,
+    "dev-package-names": [
+        "lucinda/console",
+        "lucinda/unit-testing"
+    ]
 }

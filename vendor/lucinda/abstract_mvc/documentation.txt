@@ -1,0 +1,457 @@
+201 Created
+    Use 201 when the server successfully creates a new resource as a result of the request (normally POST, sometimes PUT).
+    Typical cases
+        POST /users creates /users/{id}
+        POST /orders creates /orders/{id}
+        PUT /files/{id} creates the resource at that URI if it didn’t exist (idempotent create)
+    Headers
+        Strongly expected (practically required for a clean API)
+            Location: <canonical URI of the new resource>
+        Recommended
+            Content-Type: application/json (if returning a representation)
+            ETag and/or Last-Modified (if you return the created representation and you support validators / preconditions later)
+            Cache-Control: no-store (often for APIs; optional)
+    Body
+        Common patterns:
+            Return the created representation (most common in APIs):
+            201 + body = full resource JSON
+            Return minimal info:
+            201 + { "id": "123" }
+            Return no body:
+            allowed, but then Location becomes even more important (some still prefer 204 for “no body”, but 201 is fine when a new resource was created).
+    When not to use 201
+        If nothing new is created (use 200 or 204).
+        If the request was accepted for later creation (use 202).
+        If you’re returning an existing resource after an idempotent update (PUT/PATCH), use 200 (with body) or 204 (no body).
+
+202 Accepted
+    Use when the request is valid and authorized, but completion is deferred.
+    Typical patterns:
+        Async job submission: POST /reports returns 202 with Location: /jobs/{id} (or a JSON body with jobId) and the client polls GET /jobs/{id}.
+        Long-running operations: media transcoding, bulk export, search reindex, virus scan, ML inference.
+        Queue-based systems: you accept the command, enqueue it, processing happens later.
+    Good practice:
+        Return a job resource link (Location) and/or Retry-After.
+        Make job state explicit (queued|running|succeeded|failed) and expose result location.
+    Don’t use when:
+        You can finish within the request/response cycle (then return 200/201).
+
+203 Non-Authoritative Information
+    Almost never used in modern APIs.
+    What it means: response payload may be modified by a transforming proxy/cache and isn’t guaranteed authoritative.
+    Where it can appear:
+        Legacy proxying/caching setups that transform content (rare on today’s HTTPS end-to-end paths).
+        Internal gateways doing transformations and wanting to be explicit (still uncommon).
+    In practice:
+        If you control the gateway, you typically still return 200 and use headers/metadata to describe provenance (e.g., Via, Warning, custom X-*/structured fields).
+        Many clients won’t treat 203 differently anyway.
+    Recommendation: avoid unless you’re implementing an HTTP proxy/cache feature set.
+
+204 No Content
+    Very useful for “command-style” endpoints where no response body is needed.
+    Good cases:
+        DELETE /resource/{id} where you don’t return representation.
+        POST /logout, POST /sessions/revoke, POST /commands/{...} where UI doesn’t need payload.
+        PUT/PATCH where the client already has the updated state and doesn’t need the server’s copy.
+    Notes:
+        You can still send headers (e.g., updated ETag is irrelevant if there’s no body; but you might send rate-limit headers).
+        For browser form submissions, 204 can be awkward if the browser expects navigation. It’s great for XHR/fetch.
+
+205 Reset Content
+    Seldom used, mostly theoretical/legacy UI semantics.
+    Intended use:
+        After successful form submission, tell the user agent to reset the document view (clear inputs).
+    Why it’s rare:
+        Web apps handle this in JS.
+        Many clients ignore it.
+    Recommendation:
+        Use 204 plus client-side behavior.
+        Only consider 205 if you control a custom client that explicitly implements it.
+
+206 Partial Content
+    Very useful when serving byte ranges.
+    Common uses:
+        Resumable downloads (Range: bytes=...).
+        Video/audio streaming and scrubbing.
+        Large file preview.
+    Required behavior:
+        Support Range requests, respond with 206 and Content-Range.
+        Include Accept-Ranges: bytes when you support it.
+    Don’t use when:
+        You’re not honoring Range. If you ignore Range, you should return full content with 200 (or 416 for invalid ranges if you implement range logic).
+
+207 Multi-Status (WebDAV)
+    Use only with WebDAV (PROPFIND, REPORT, etc.). It’s not for generic REST batch APIs.
+    Real use:
+        A single WebDAV request returns per-resource results (properties, locks, etc.) in XML <multistatus>.
+    For normal JSON APIs:
+        Prefer 200 with a JSON array of per-item statuses, or 207 only if you are explicitly implementing WebDAV semantics (most aren’t).
+
+208 Already Reported (WebDAV)
+    Also WebDAV-only, and even then it typically appears inside a 207 Multi-Status body to avoid repeating the same resource.
+    If you’re not implementing WebDAV: ignore.
+
+226 IM Used
+    Rare; comes from the “Delta encoding / instance-manipulations” extensions.
+    Meaning:
+        Server fulfilled GET but the representation has had “instance manipulations” applied (transforms/deltas).
+    In practice today:
+        CDNs and modern HTTP stacks use other mechanisms (compression via Content-Encoding, variants via Vary, diffs via app-level protocols).
+    Almost no mainstream clients depend on 226.
+    Recommendation: don’t use unless you’re implementing that specific RFC ecosystem.
+
+====================================================================================================================================
+
+300 Multiple Choices
+    Conceptually neat; rarely used on the public web.
+    When it can make sense: A single URI maps to multiple equally-valid representations and you want the client to choose:
+        Language variants (though HTTP usually uses Accept-Language negotiation instead).
+        Different formats where you refuse to pick (but most servers pick via Accept).
+    Why it’s rare:
+        Content negotiation (Accept* headers) and redirects solve most cases.
+        Browsers don’t present great UX for 300 choice lists.
+    If you do use it:
+        Provide a machine-readable list (JSON or HTML) and possibly a Location for the preferred choice.
+
+301 Moved Permanently
+    Utility: Permanent redirect to a new canonical URI (host change, canonical slash rules, moved resource).
+    Required/expected header:
+        Location: <new-uri> (effectively required)
+    Caching: Often cached aggressively by clients and intermediaries. If you might ever roll it back, prefer 302/307.
+    Method semantics: Historically, some clients rewrite POST to GET on 301 (not guaranteed safe). If preserving method matters, prefer 308.
+    Actually useful: yes (canonicalization, migration), but use carefully due to caching and method-rewrite ambiguity.
+
+302 Found
+    Utility: Temporary redirect (resource temporarily elsewhere).
+    Required/expected header:
+        Location: <temporary-uri>
+    Caching: Usually not cached as permanently as 301, but caches may store it if headers allow. If you want to avoid caching: Cache-Control: no-store.
+    Method semantics: Historically ambiguous—many clients rewrite POST to GET (same issue as 301). If you want guaranteed “same method”, use 307. If you want guaranteed “switch to GET”, use 303.
+    Actually useful: yes, but for APIs 303/307 is usually clearer.
+
+303 See Other
+    Very useful for the classic “POST then redirect to GET”.
+    Best cases:
+        POST /orders creates an order, then return 303 with Location: /orders/{id} so the client does a GET to view it.
+        Prevents accidental resubmission on refresh (browser UX).
+        Works well when the POST response shouldn’t be directly rendered.
+    Key semantic point:
+        303 explicitly says “follow with GET”, regardless of original method.
+
+304 Not Modified
+    Used for conditional GET/HEAD to avoid sending the response body when the client’s cached copy is still valid.
+    Typical flow:
+        Client caches /resource and stores its validators (ETag / Last-Modified).
+        Client revalidates: If-None-Match: "<etag>" and/or If-Modified-Since: <date>
+        Server determines nothing changed → returns 304 with no body.
+        Client uses its cached body.
+    Request headers that trigger it
+        If-None-Match (preferred; uses ETag)
+        If-Modified-Since (date-based; less precise)
+    Response headers
+        Must NOT include a message body.
+    Should include validators and cache metadata (same as a 200 would)
+        ETag: "<etag>" (recommended)
+        Last-Modified: <http-date> (recommended if you use it)
+        Cache-Control, Expires (recommended if you do caching)
+        Vary (if representation varies by request headers)
+    Do NOT send:
+        Content-Type, Content-Length (since there is no body)
+
+305 Use Proxy
+    Utility: Originally meant “access this resource via a proxy” (Location-like semantics but for proxies).
+    Status today: Deprecated/obsolete. Not supported in modern browsers for security reasons (would enable forcing traffic through attacker-controlled proxies).
+    Headers: There isn’t a reliable modern header contract clients follow for it.
+    Actually useful: no. Don’t implement.
+
+306 (Unused / “Switch Proxy” in old drafts)
+    Utility: None in current HTTP.
+    Status today: Unused/obsolete. Kept only as a historical artifact; clients shouldn’t receive it.
+    Actually useful: no. Don’t implement.
+
+307 Temporary Redirect
+    Useful when you must preserve the method and body on redirect, and the move is temporary.
+    Good cases:
+        Temporary reroute to another host/region (POST /upload -> 307 Location: https://uploads-region/...) while keeping POST as POST.
+        Maintenance shunts where you keep the same operation semantics.
+    Pitfalls:
+        Some older clients historically mishandled 307 less than 302; modern clients are mostly fine.
+        Be careful with auth headers/cookies when redirecting across origins.
+
+308 Permanent Redirect
+    Useful when the move is permanent and you must preserve method/body.
+    Good cases:
+        Permanent API versioning/migration where POST /v1/... permanently moved to /v2/... but you cannot allow clients to rewrite it into a GET.
+        Canonical host enforcement (http -> https, example.com -> api.example.com) where preserving method matters.
+    Operational note:
+        Some clients cache 308 like 301, so don’t use it for “maybe later we’ll change back”.
+    Rule-of-thumb summary
+
+====================================================================================================================================
+
+400 Bad Request
+    Utility: Request cannot be processed due to malformed syntax or invalid request framing. Typical: invalid JSON, missing required query param, invalid parameter format, invalid route parameters, invalid enum value when the server treats it as “request is invalid” rather than “resource state invalid”.
+    Headers: none required.
+    Body template: very useful with Problem Details + optional field errors:
+        detail: “Invalid JSON”
+        errors: { "field": ["message"] } (your own convention)
+    Actually useful: yes, very common.
+
+401 Unauthorized
+    Utility: Authentication is missing or invalid.
+    Headers (expected/required):
+        WWW-Authenticate is expected and effectively required by spec semantics (at least one challenge), e.g.:
+            WWW-Authenticate: Bearer realm="api", error="invalid_token"
+        or Basic realm="..."
+    Body template: optional, but good for APIs. Don’t leak sensitive auth details.
+    Actually useful: yes, common.
+
+402 Payment Required
+    Utility: Reserved. No consistent meaning in HTTP semantics.
+    Headers: none.
+    Body template: if you use it, be explicit (Problem Details) and document it heavily.
+    Actually useful: usually no. Most APIs use 403 (feature gated), 404 (hide existence), or a domain-specific 4xx with Problem Details.
+
+403 Forbidden
+    Utility: Authenticated (or not), but access is refused due to authorization/policy. Re-auth won’t help unless credentials change (role, scope, ACL).
+    Headers: none required.
+    Body template: useful; keep it generic if you don’t want to reveal policy.
+    Actually useful: yes.
+
+404 Not Found
+    Utility: No resource matches the URI (or you intentionally hide existence).
+    Headers: none required.
+    Body template: optional. For APIs, Problem Details helps.
+    Actually useful: yes.
+
+405 Method Not Allowed
+    Utility: Endpoint exists, but method isn’t supported for that resource.
+    Headers (required):
+    Allow: GET, POST, ... listing supported methods.
+    Body template: optional.
+    Actually useful: yes, especially for clean REST-ish APIs.
+
+406 Not Acceptable
+    Utility: Server cannot generate a representation matching the request’s Accept (or other negotiation headers).
+    Headers: none required.
+    Body template: should include what is supported (practically useful):
+        supported: ["application/json"] or similar.
+    Actually useful: sometimes. Many APIs ignore Accept and always return JSON; in that case 406 is not needed.
+
+407 Proxy Authentication Required
+    Utility: Like 401, but for an intermediary proxy, not the origin.
+    Headers (expected/required):
+    Proxy-Authenticate challenge header.
+    Body template: rarely relevant for typical APIs.
+    Actually useful: usually no unless you are implementing an HTTP proxy.
+
+408 Request Timeout
+    Utility: Server timed out waiting for the request (headers/body) from the client.
+    Headers: none required. Often Connection: close.
+    Body template: optional.
+    Actually useful: rarely from application code; typically emitted by web server / load balancer. You usually handle timeouts at infrastructure level.
+
+409 Conflict
+    Utility: Request is syntactically valid, but cannot be applied due to a conflict with current resource state. Common with:
+        version conflicts (edit collisions)
+        unique constraint conflicts (username already exists) — though many use 409 or 422; pick one consistently.
+    Headers: none required.
+    Body template: strongly recommended: include conflict reason and how to resolve (e.g., current version, expected version).
+    Actually useful: yes.
+
+410 Gone
+    Utility: Resource intentionally removed and will not return. Stronger semantic than 404.
+    Headers: none required.
+    Body template: optional. If you include, it’s helpful to explain permanence.
+    Actually useful: sometimes (public URLs, deprecations, compliance). For internal APIs, often not worth differentiating from 404.
+
+411 Length Required
+    Utility: Server requires Content-Length but it is missing.
+    Headers: none required.
+    Body template: optional.
+    Actually useful: rare in modern stacks; chunked transfer exists. You typically don’t emit this from app code.
+
+412 Precondition Failed
+    Utility: Conditional request headers were provided but conditions failed. Typical:
+        If-Match does not match current ETag (optimistic concurrency)
+        If-Unmodified-Since check fails
+    Headers: none required, but see note.
+    Body template: recommended to include current ETag/version to help clients recover (or use 428/409 patterns).
+    Actually useful: yes if you implement conditional requests / concurrency properly.
+
+413 Payload Too Large
+    Utility: Request entity too large.
+    Headers:
+        Retry-After is optional (useful if limit is temporary, e.g., “try later” due to load shedding).
+        You may include Connection: close.
+    Body template: include max size and what exceeded it.
+    Actually useful: yes, commonly emitted by proxies (nginx) and sometimes by app.
+
+414 URI Too Long
+    Utility: URI exceeds server limits (query string too big, loops).
+    Headers: none required.
+    Body template: optional.
+    Actually useful: rare, usually infra-level.
+
+415 Unsupported Media Type
+    Utility: Content-Type not supported for request body (e.g., client sent XML but only JSON is accepted), or unsupported content encoding.
+    Headers: none required.
+    Body template: include supported request media types.
+    Actually useful: yes if you enforce Content-Type.
+
+416 Range Not Satisfiable
+    Utility: Client sent invalid Range header for the current representation.
+    Headers (expected/required):
+    Content-Range: bytes */<total> (for byte ranges) to indicate the current size. This is the key interoperability piece.
+    Body template: optional.
+    Actually useful: yes if you support Range/206.
+
+417 Expectation Failed
+    Utility: Server cannot meet Expect header (most commonly Expect: 100-continue).
+    Headers: none required.
+    Body template: optional.
+    Actually useful: almost never from app code; handled by servers.
+
+418 I’m a Teapot
+    Utility: None (joke). Some use it for bot mitigation or “don’t do that”.
+    Headers: none.
+    Body template: doesn’t matter.
+    Actually useful: no. Use 400/403/429, or 451 if legal, or 404 if hiding.
+
+421 Misdirected Request
+    Utility: Request was sent to a server that is not able/willing to produce a response for that authority/connection (HTTP/2 and TLS/SNI routing issues).
+    Headers: none required.
+    Body template: optional.
+    Actually useful: sometimes, but almost always emitted by a reverse proxy / server, not by your app.
+
+422 Unprocessable Entity
+    Utility: Request is well-formed (e.g., JSON parses), but semantically invalid (business/validation errors). Typical:
+        field validation (string where number required, invalid email format)
+        cross-field validation (end date before start date)
+    Headers: none required.
+    Body template: very useful with structured errors (field → messages). Problem Details fits well.
+    Actually useful: yes, common in APIs that distinguish 400 (malformed) vs 422 (validation).
+
+423 Locked (WebDAV)
+    Utility: Resource is locked (WebDAV locking semantics).
+    Headers: in WebDAV, lock token details appear in the body/headers depending on method; for generic APIs there’s no standard header.
+    Body template: include lock owner/expiry if you expose it.
+    Actually useful: only if you implement locking semantics. Otherwise, use 409 or 423 only if you document it.
+
+424 Failed Dependency (WebDAV)
+    Utility: In WebDAV, subrequest failed. Outside DAV, it can describe chained operations (A failed so B fails).
+    Headers: none required.
+    Body template: include dependency failures list.
+    Actually useful: rarely. For batch APIs, better: 200 with per-item results, or 207 (if you want), rather than a single 424.
+
+425 Too Early
+    Utility: Mitigates replay risks with “early data” (TLS 1.3 0-RTT). Server refuses because request might be replayed.
+    Headers: none required.
+    Body template: optional.
+    Actually useful: only in specific TLS deployments; usually handled at edge proxy.
+
+426 Upgrade Required
+    Utility: Client must switch protocols.
+    Headers (expected/required):
+    Upgrade: <protocol> (and often Connection: Upgrade in HTTP/1.1 contexts)
+    Body template: optional.
+    Actually useful: uncommon for JSON APIs; more relevant for switching to WebSocket or newer HTTP versions in special setups.
+
+428 Precondition Required
+    Utility: Server requires a conditional request to prevent lost updates. Typical: require If-Match on PUT/PATCH/DELETE.
+    Headers: none required.
+    Body template: should state which precondition header is required (e.g., If-Match).
+    Actually useful: yes, if you enforce optimistic concurrency.
+
+429 Too Many Requests
+    Utility: Rate limiting / throttling.
+    Headers:
+        Retry-After is optional but very useful.
+    Common de-facto headers (not one universal standard):
+        RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset (IETF draft family; increasingly common) or legacy X-RateLimit-*
+    Body template: include limit scope (per IP, per user, per token) only if you’re okay revealing it.
+    Actually useful: yes.
+
+431 Request Header Fields Too Large
+    Utility: Headers too large (cookies, huge auth headers, too many headers).
+    Headers: none required.
+    Body template: include which header triggered it if safe; often you shouldn’t echo back sensitive values.
+    Actually useful: rare; usually server emits it.
+
+451 Unavailable for Legal Reasons
+    Utility: Resource blocked/removed for legal reasons (takedown, geo-block, court order).
+    Headers: none required, but commonly include explanatory pointers:
+        Link: <...>; rel="blocked-by" is seen in some implementations (not universally standard).
+        Or include details in the body.
+    Body template: recommended to include legal basis in a non-sensitive way.
+    Actually useful: yes in public-facing content systems; less common in internal APIs.
+
+============================
+
+500 Internal Server Error
+Use this for an unexpected server-side failure when no more specific status fits. It is the generic fallback. Typical causes: uncaught exception, broken template render, failed internal invariant, null dereference, unexpected DB driver failure bubbling up without a better mapping.
+
+501 Not Implemented
+Use this when the server does not support the functionality required to fulfill the request, especially when it does not recognize or support the HTTP method for any resource. This is not “feature not yet built” in your application’s business sense; it is closer to “this server does not implement this HTTP capability.” If the method is known but not allowed on this resource, use 405, not 501. A 501 response is also heuristically cacheable unless cache controls say otherwise.
+
+502 Bad Gateway
+Use this when your server is acting as a gateway/proxy and it received an invalid response from an upstream server. Example: your app calls an internal auth service and gets malformed HTTP, truncated headers, or some invalid upstream response.
+
+503 Service Unavailable
+Use this when the server is temporarily unable to handle the request, usually because of overload or maintenance. This is the correct status for temporary outages, and it may include Retry-After to tell the client when to retry. MDN explicitly notes that 429 Too Many Requests is better when the issue is client-specific rate limiting rather than general service unavailability.
+
+504 Gateway Timeout
+Use this when your server is acting as a gateway/proxy and an upstream server did not respond in time. Difference from 502: with 502 you got a bad response; with 504 you did not get a timely response.
+
+505 HTTP Version Not Supported
+Use this when the server does not support, or refuses to support, the major HTTP version used by the request. This is rare in normal application code.
+
+506 Variant Also Negotiates
+Registered by IANA from RFC 2295. It relates to transparent content negotiation misconfiguration. Very niche.
+
+507 Insufficient Storage
+Registered from WebDAV. It means the server is unable to store the representation needed to complete the request. Usually relevant to authoring/storage systems, not ordinary MVC apps.
+
+508 Loop Detected
+Also from WebDAV. It indicates the server detected an infinite loop while processing the request.
+
+510 Not Extended
+Registered by IANA from RFC 2774. Rarely used in mainstream web applications.
+
+511 Network Authentication Required
+Intended mainly for intercepting proxies such as captive portals, not ordinary origin servers. It should generally not be generated by normal application servers.
+
+
+
+
+
+Implement: 201, 202, 204, 206, 301, 302, 303, 304, 307, 308
+Implement: 400, 401, 403, 404, 405, 409, 415, 422, 428, 429
+
+Recommended “error response contract” for an API
+
+If you want this to be enforceable in a framework, standardize:
+
+Always return application/problem+json for 4xx/5xx (except where the spec forces otherwise and/or no body like 204).
+
+For validation errors (422), include a structured errors map.
+
+Enforce required headers:
+
+401 → WWW-Authenticate
+
+407 → Proxy-Authenticate (if relevant)
+
+405 → Allow
+
+416 → Content-Range: bytes */<total>
+
+426 → Upgrade
+
+429/413 (optional but recommended) → Retry-After
+
+“Actually useful” shortlist
+
+
+Useful only if you support the related feature: 406 (content negotiation), 412/428 (ETag preconditions), 416 (Range), 451 (legal), 410 (tombstones)
+
