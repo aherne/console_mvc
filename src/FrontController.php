@@ -16,7 +16,7 @@ use Lucinda\MVC\EventListener\MultiFaceted;
 use Lucinda\MVC\Response\Transformer\Body as TransformerBody;
 use Lucinda\MVC\Service\ResolverInfoDetector;
 use Lucinda\MVC\Service\ViewDetector;
-use Lucinda\MVC\Facets\ResolverInfo;
+use Lucinda\MVC\XmlTags\ResolverInfo;
 
 /**
  * Implements STDOUT front controller MVC functionality, integrating all API components as a whole.
