@@ -13,6 +13,7 @@ use Lucinda\ConsoleSTDOUT\Request\Validator as ValidatedRequest;
 use Lucinda\MVC\Controller\ViewAware;
 use Lucinda\MVC\EventListener\Faceted;
 use Lucinda\MVC\EventListener\MultiFaceted;
+use Lucinda\MVC\Response\Console;
 use Lucinda\MVC\Response\Transformer\Body as TransformerBody;
 use Lucinda\MVC\Service\ResolverInfoDetector;
 use Lucinda\MVC\Service\ViewDetector;
@@ -76,7 +77,7 @@ class FrontController implements Runnable
 
             // determine response format
             $responseInfoDetector = new ResolverInfoDetector($application, $requestValidator);
-            $response = new Response();
+            $response = new Console();
 
             // locates and runs page controller and sets up view
             $filledView = $this->runController($application, $requestValidator);
@@ -84,7 +85,9 @@ class FrontController implements Runnable
             $view = $viewDetector->getView();
 
             // resolves view into response body, unless output stream has been written to already
-            $this->runViewResolver($responseInfoDetector->getResolver(), $response, $view);
+            if ($view !== false) {
+                $this->runViewResolver($responseInfoDetector->getResolver(), $response, $view);
+            }
 
             // execute events for RESPONSE
             $this->runResponseTransformers($response);
@@ -125,9 +128,9 @@ class FrontController implements Runnable
     /**
      * Executes all response listeners that in turn transform the response
      * 
-     * @param Response $response
+     * @param Console $response
      */
-    protected function runResponseTransformers(Response $response): void
+    protected function runResponseTransformers(Console $response): void
     {
         $eventsToRun = $this->eventScheduler->get(EventType::RESPONSE);
         foreach ($eventsToRun as $className) {
@@ -165,13 +168,13 @@ class FrontController implements Runnable
      * Detects resolver to compile view into response body, if not already written
      *
      * @param ResolverInfo $resolverInfo
-     * @param HttpResponse $response
+     * @param Console $response
      * @param View $view
      * @return void
      */
     protected function runViewResolver(
         ResolverInfo $resolverInfo,
-        Response $response,
+        Console $response,
         View $view
     ): void {
         $resolver = $this->reflectionInjector->create($resolverInfo->getViewResolver());
