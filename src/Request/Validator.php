@@ -55,19 +55,18 @@ final class Validator implements Facet, RequestValidator
      * Sets valid format to use in response for current request
      *
      * @throws ConfigurationException
-     * @return string
      */
-    private function setFormat(Application $application): string
+    private function setFormat(Application $application): void
     {
         $extension = $application->getApplicationInfo()->getDefaultFormat();
-        $route = $application->getRoutes($application->getApplicationInfo()->getDefaultRoute());
+        $route = $application->getRoutes($this->route);
         if ($route->getFormat()) {
             $extension = $route->getFormat();
         }
         if ($application->getResolvers($extension)===null) {
             throw new ConfigurationException("Format could not be matched to resolvers.resolver tag @ XML: ".$extension);
         }
-        return $extension;
+        $this->format = $extension;
     }
 
     /**

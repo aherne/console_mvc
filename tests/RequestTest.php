@@ -1,54 +1,75 @@
 <?php
-
 namespace Test\Lucinda\ConsoleSTDOUT;
 
 use Lucinda\ConsoleSTDOUT\Request;
+use Lucinda\ConsoleSTDOUT\Request\UserInfo;
 use Lucinda\UnitTest\Result;
+use Lucinda\UnitTest\Validator\Arrays;
+use Lucinda\UnitTest\Validator\Booleans;
+use Lucinda\UnitTest\Validator\Objects;
+use Lucinda\UnitTest\Validator\Strings;
 
 class RequestTest
 {
-    private $object;
-
-    public function __construct()
+    private function createRequest(array $argv): Request
     {
-        $_SERVER["argv"] = ["index.php", "test", "me"];
-        $this->object = new Request();
+        $_SERVER["argv"] = $argv;
+        return new Request();
     }
 
-    public function getRoute()
+    private function getExpectedUserName(array $server = []): string
     {
-        return new Result($this->object->getRoute()=="test");
-    }
-
-
-    public function parameters()
-    {
-        return new Result($this->object->parameters()==["me"]);
-    }
-
-
-    public function getOperatingSystem()
-    {
-        return new Result($this->object->getOperatingSystem()==php_uname("s"));
-    }
-
-
-    public function getUserInfo()
-    {
-        $userName = "";
         if (function_exists("posix_getpwuid")) {
-            $userName = posix_getpwuid(posix_geteuid())["name"];
-        } elseif (!empty($_SERVER["USER"])) {
-            $userName = $_SERVER["USER"];
-        } else {
-            $userName = get_current_user();
+            return posix_getpwuid(posix_geteuid())["name"];
         }
-        return new Result($this->object->getUserInfo()->getName()==$userName);
+        if (!empty($server["USER"])) {
+            return $server["USER"];
+        }
+
+        return get_current_user();
     }
 
-
-    public function getInputStream()
+    public function getRoute(): Result
     {
-        return new Result($this->object->getInputStream()==="");
+        $request = $this->createRequest(["index.php", "test", "alpha", "beta"]);
+
+        return (new Strings($request->getRoute()))->assertEquals("test");
+    }
+
+    public function parameters(): array
+    {
+        $request = $this->createRequest(["index.php", "test", "alpha", "beta"]);
+
+        return [
+            (new Arrays($request->parameters()))->assertEquals(["alpha", "beta"]),
+            (new Strings((string) $request->parameters(0)))->assertEquals("alpha"),
+            (new Strings((string) $request->parameters(1)))->assertEquals("beta"),
+            (new Booleans(is_null($request->parameters(2))))->assertTrue()
+        ];
+    }
+
+    public function getOperatingSystem(): Result
+    {
+        $request = $this->createRequest(["index.php", "test"]);
+
+        return (new Strings($request->getOperatingSystem()))->assertEquals(php_uname("s"));
+    }
+
+    public function getUserInfo(): array
+    {
+        $_SERVER["argv"] = ["index.php", "test"];
+        $request = new Request();
+
+        return [
+            (new Objects($request->getUserInfo()))->assertInstanceOf(UserInfo::class),
+            (new Strings($request->getUserInfo()->getName()))->assertEquals($this->getExpectedUserName($_SERVER))
+        ];
+    }
+
+    public function getInputStream(): Result
+    {
+        $request = $this->createRequest(["index.php", "test"]);
+
+        return (new Strings($request->getInputStream()))->assertEquals("");
     }
 }

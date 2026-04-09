@@ -1,32 +1,40 @@
 <?php
-
 namespace Test\Lucinda\ConsoleSTDOUT\Request;
 
 use Lucinda\ConsoleSTDOUT\Request\UserInfo;
 use Lucinda\UnitTest\Result;
+use Lucinda\UnitTest\Validator\Booleans;
+use Lucinda\UnitTest\Validator\Strings;
 
 class UserInfoTest
 {
-    private $object;
-
-    public function __construct()
-    {
-        $this->object = new UserInfo(PHP_OS, ["USER"=>"tester"]);
-    }
-
-    public function getName()
+    private function getExpectedUserName(array $server): string
     {
         if (function_exists("posix_getpwuid")) {
-            return new Result($this->object->getName()==posix_getpwuid(posix_geteuid())["name"]);
-        } elseif (!empty($_SERVER["USER"])) {
-            return new Result($this->object->getName()==$_SERVER["USER"]);
-        } else {
-            return new Result($this->object->getName()==get_current_user());
+            return posix_getpwuid(posix_geteuid())["name"];
         }
+        if (!empty($server["USER"])) {
+            return $server["USER"];
+        }
+
+        return get_current_user();
     }
 
-    public function isSuper()
+    public function getName(): Result
     {
-        return new Result($this->object->isSuper()==false);
+        $server = ["USER" => "tester"];
+        $userInfo = new UserInfo("Linux", $server);
+
+        return (new Strings($userInfo->getName()))->assertEquals($this->getExpectedUserName($server));
+    }
+
+    public function isSuper(): Result
+    {
+        $userInfo = new UserInfo("Linux", ["USER" => "tester"]);
+        $expected = ($userInfo->getName() == "root");
+
+        return $expected
+            ? (new Booleans($userInfo->isSuper()))->assertTrue()
+            : (new Booleans($userInfo->isSuper()))->assertFalse();
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <application ref="tests/fixtures/validator/application"/>
+  <resolvers ref="tests/fixtures/validator/resolvers"/>
+  <routes ref="tests/fixtures/validator/routes"/>
+</xml>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <routes>
+    <route id="index" view="index"/>
+    <route
+      id="test"
+      controller="Test\Lucinda\ConsoleSTDOUT\Support\Controllers\TestController"
+      view="test"
+    />
+  </routes>
+</xml>

@@ -1,46 +1,31 @@
 <?php
-
 namespace Test\Lucinda\ConsoleSTDOUT;
 
-use Test\Lucinda\ConsoleSTDOUT\mocks\TestAttributes;
-use Lucinda\ConsoleSTDOUT\FrontController;
-use Lucinda\ConsoleSTDOUT\EventType;
-use Test\Lucinda\ConsoleSTDOUT\mocks\EventListeners\EndTracker;
-use Test\Lucinda\ConsoleSTDOUT\mocks\EventListeners\StartTracker;
-use Lucinda\UnitTest\Result;
+use Lucinda\UnitTest\Validator\Arrays;
+use Lucinda\UnitTest\Validator\Strings;
 
 class FrontControllerTest
 {
-    private $object;
-    private $attributes;
-
-    public function __construct()
+    public function run(): array
     {
-        $this->attributes = new TestAttributes();
-        $this->object = new FrontController(__DIR__."/mocks/configuration.xml", $this->attributes);
-    }
+        $logFile = sys_get_temp_dir()."/console-stdout-front-controller-".uniqid("", true).".log";
+        @unlink($logFile);
 
-    public function addEventListener()
-    {
-        $this->object->addEventListener(EventType::START, StartTracker::class);
-        $this->object->addEventListener(EventType::END, EndTracker::class);
-        return new Result(true);
-    }
+        $command = sprintf(
+            "FC_EVENT_LOG=%s php %s %s %s %s",
+            escapeshellarg($logFile),
+            escapeshellarg(__DIR__."/../tools/front_controller_runner.php"),
+            escapeshellarg(__DIR__."/fixtures/front-controller.xml"),
+            escapeshellarg("test"),
+            escapeshellarg("world")
+        );
+        $output = trim((string) shell_exec($command));
+        $events = file_exists($logFile) ? file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+        @unlink($logFile);
 
-
-    public function run()
-    {
-        $_SERVER = [
-            'argv' => ["index.php", "test", "me"]
+        return [
+            (new Strings($output))->assertEquals("Test: world"),
+            (new Arrays($events))->assertEquals(["start", "application", "request", "end"])
         ];
-        ob_start();
-        $this->object->run();
-        $response = ob_get_contents();
-        ob_clean();
-
-        $results = [];
-        $results[] = new Result($response=="Test: me", "tested response");
-        $results[] = new Result($this->attributes->getStartTime() && $this->attributes->getEndTime() && $this->attributes->getEndTime()>$this->attributes->getStartTime(), "tested event listeners");
-        return $results;
     }
 }

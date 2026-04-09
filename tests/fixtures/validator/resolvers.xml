@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <resolvers>
+    <resolver format="txt" class="Test\Lucinda\ConsoleSTDOUT\Support\Resolvers\TextResolver"/>
+    <resolver format="json" class="Test\Lucinda\ConsoleSTDOUT\Support\Resolvers\JsonResolver"/>
+  </resolvers>
+</xml>
