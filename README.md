@@ -1,464 +1,248 @@
 # Console MVC API
 
-Table of contents:
+`lucinda/console-mvc` is a small integration package for running Lucinda MVC applications from the command line and writing the resolved response to STDOUT.
 
-- [About](#about)
-- [Configuration](#configuration)
-- [Binding Points](#binding-points)
-- [Execution](#execution)
-    - [Initialization](#initialization)
-    - [Binding Events](#binding-events)
-    - [Configuring Shared Variables](#configuring-shared-variables)
-    - [Handling](#handling)
-- [Installation](#installation)
-- [Running Requests](#running-requests)
-- [Unit Tests](#unit-tests)
-- [Reference Guide](#reference-guide)
-- [Specifications](#specifications)
-    - [How Is Response Format Detected](#how-is-response-format-detected)
-    - [How Are View Resolvers Located](#how-are-view-resolvers-located)
-    - [How Is Route Detected](#how-is-route-detected)
-    - [How Are Controllers Located](#how-are-controllers-located)
-    - [How Are Request Parameters Detected](#how-are-request-parameters-detected)
-    - [How Are Views Located](#how-are-views-located)
+It sits on top of [`lucinda/abstract_mvc`](https://github.com/aherne/abstract_mvc) and adds console-specific request detection, route/format validation, and a front controller that wires the request lifecycle together.
 
-## About
+## Suggested Structure
 
-This API is a **skeleton** (requires [binding](#binding-points) by developers) created to efficiently handle console requests into server responses using a MVC version where views and models are expected to be independent while controllers mediate between the two based on user request. Designed with modularity, efficiency and simplicity at its foundation, API is both object and event oriented: similar to JavaScript, it allows developers to bind logic that will be executed when predefined events are reached while handling.
+For this package type, the README works better when organized around integration flow instead of a full class dump:
 
-![diagram](https://www.lucinda-framework.com/public/images/console-mvc-api.svg)
-
-API does nothing more than standard MVC logic, so it may need a framework to be built on top to add further features (eg: DB connectivity). In order to use it, following steps are required from developers:
-
-- **[configuration](#configuration)**: setting up an XML file where this API is configured
-- **[binding points](#binding-points)**: binding user-defined components defined in XML/code to API prototypes in order to gain necessary abilities
-- **[initialization](#initialization)**: instancing [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php), a [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php) able to handle requests into responses later on based on above two
-- **[binding events](#binding-events)**: setting up [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php) classes that will be instanced and *run* when predefined events are reached during handling process
-- **[configuring shared variables](#configuring-shared-variables)**: extend [Attributes](#class-attributes) class to encapsulate variables specific to your project, to be shared between event listeners and controllers
-- **[handling](#handling)**: calling *run* method @ [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php)  to finally handle requests into responses, triggering events above (if any)
-
-API is fully PSR-4 compliant, only requiring [Abstract MVC API](https://github.com/aherne/mvc) for basic MVC logic, PHP7.1+ interpreter and SimpleXML extension. To quickly see how it works, check:
-
-- **[installation](#installation)**: describes how to install API on your computer, in light of steps above
-- **[running requests](#running-requests)**: describes how to use installed and configured API to run console requests
-- **[reference guide](#reference-guide)**: describes all API classes, methods and fields relevant to developers
-- **[unit tests](#unit-tests)**: API has 100% Unit Test coverage, using [UnitTest API](https://github.com/aherne/unit-testing) instead of PHPUnit for greater flexibility
-- **[example](https://github.com/aherne/console-mvc/blob/master/tests/FrontController.php)**: shows a deep example of API functionality based on [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php) unit test
-
-All classes inside belong to **Lucinda\ConsoleSTDOUT** namespace!
-
-## Configuration
-
-To configure this API you must have a XML with following tags inside:
-
-- **[application](#application)**: (mandatory) configures your application on a general basis
-- **[resolvers](#resolvers)**: (mandatory) configures formats in which your application is able to resolve responses to
-- **[routes](#routes)**: (mandatory) configures routes that bind requested resources to controllers and views
-
-### Application
-
-Tag documentation is completely covered by inherited Abstract MVC API [specification](https://github.com/aherne/mvc#application)! Since STDIN for this API is made of HTTP(s) requests, value of *default_route* attribute must point to **index** (homepage) for requests that come with no route. 
-
-### Resolvers
-
-Tag documentation is completely covered by inherited Abstract MVC API [specification](https://github.com/aherne/mvc#resolvers)!
-
-### Routes
-
-Maximal syntax of this tag is:
-
-```xml
-<routes>
-    <route id="..." controller="..." view="..." format="..."/>
-    ...
-</routes>
-```
-
-Most tag logic is already covered by Abstract MVC API [specification](https://github.com/aherne/mvc#routes). Following extra observations need to be made:
-
-- *id*: (mandatory) requested route identified by *first console argument* when running API!
-- *controller*: (optional) name of user-defined PS-4 autoload compliant class (including namespace) that will mitigate requests and responses based on models.<br/>Class must be a [Controller](#abstract-class-controller) instance!
-
-Tag example:
-
-```xml
-<routes>
-    <route id="users" controller="Lucinda\Project\Controllers\UsersSynchronization" view="users"/>
-    <route id="groups" controller="Lucinda\Project\Controllers\GroupsSynchronization" view="groups">
-</routes>
-```
-
-**^ It is mandatory to define a route for that defined by default_route attribute @ [application](#application) XML tag!**
-
-If request came without route, **default** route is used. If, however, request came with a route that matches no **id**, a [RouteNotFoundException](https://github.com/aherne/console-mvc/blob/master/src/RouteNotFoundException.php) is thrown!
-
-## Binding Points
-
-In order to remain flexible and achieve highest performance, API takes no more assumptions than those absolutely required! It offers developers instead an ability to bind to its prototypes in order to gain certain functionality.
-
-### Declarative Binding
-
-It offers developers an ability to **bind declaratively** to its prototype classes/interfaces via XML:
-
-| XML Attribute @ Tag | Class Prototype | Ability Gained |
-| --- | --- | --- |
-| [controller @ route](#routes) | [Controller](#abstract-class-controller) | MVC controller for any request URI |
-| [class @ resolver](#resolvers) | [\Lucinda\MVC\ViewResolver](https://github.com/aherne/mvc#Abstract-Class-ViewResolver) | Resolving response in a particular format (eg: html) |
-
-### Programmatic Binding
-
-It offers developers an ability to **bind programmatically** to its prototypes via [FrontController](#initialization) constructor:
-
-| Class Prototype | Ability Gained |
-| --- | --- |
-| [Attributes](#class-attributes) | (mandatory) Collects data (via setters and getters) to be made available throughout request-response cycle |
-
-and addEventListener method (see: [Binding Events](#binding-events) section)!
-
-## Execution
-
-### Initialization
-
-Now that developers have finished setting up XML that configures the API, they are finally able to initialize it by instantiating [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php).
-
-Apart from method *run* required by [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php) interface it implements, class comes with following public methods:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| __construct | string $documentDescriptor, [Attributes](#class-attributes) $attributes | void | Records user defined XML and attributes for later handling |
-| addEventListener | [EventType](https://github.com/aherne/console-mvc/blob/master/src/EventType.php) $type, string $className | void | Binds a listener to an event type |
-
-Where:
-
-- *$documentDescriptor*: relative location of XML [configuration](#configuration) file. Example: "configuration.xml"
-- *$attributes*: see **[configuring shared variables](#configuring-shared-variables)**.
-- *$type*: event type (see **[binding-events](#binding-events)** below) encapsulated by enum [EventType](https://github.com/aherne/console-mvc/blob/master/src/EventType.php)
-- *$className*: listener *class name*, including namespace and subfolder, found in *folder* defined when [Attributes](#class-attributes) was instanced.
-
-Example:
-
-```php
-$handler = new FrontController("configuration.xml", new MyCustomAttributes("application/event_listeners");
-$handler->run();
-```
-
-### Binding Events
-
-As mentioned above, API allows developers to bind listeners to handling lifecycle events via *addEventListener* method above. Each event  type corresponds to an abstract [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php) class:
-
-| Type | Class | Description |
-| --- | --- | --- |
-| EventType::START | [EventListeners\Start](#abstract-class-eventlisteners-start) | Ran before [configuration](#configuration) XML is read |
-| EventType::APPLICATION | [EventListeners\Application](#abstract-class-eventlisteners-application) | Ran after [configuration](#configuration) XML is read into [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) |
-| EventType::REQUEST | [EventListeners\Request](#abstract-class-eventlisteners-request) | Ran after user request is read into [Request](#class-request) object |
-| EventType::RESPONSE | [EventListeners\Response](#abstract-class-eventlisteners-response) | Ran after [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) body is compiled but before it's rendered |
-| EventType::END | [EventListeners\End](#abstract-class-eventlisteners-end) | Ran after [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) was rendered back to caller  |
-
-Listeners must extend matching event class and implement required *run* method holding the logic that will execute when event is triggered. It is required for them to be registered BEFORE *run* method is ran:
-
-```php
-$handler = new FrontController("stdout.xml", new FrameworkAttributes();
-$handler->addEventListener(EventType::APPLICATION, Lucinda\Project\EventListeners\Logging::class);
-$handler->run();
-```
-
-To understand how event listeners are located, check [specifications](#how-are-event-listeners-located)!
-
-### Configuring Shared Variables
-
-API allows event listeners to set variables that are going to be made available to subsequent event listeners and controllers. For each variable there is a:
-
-- *setter*: to be ran once by a event listener
-- *getter*: to be ran by subsequent event listeners and controllers
-
-API comes with [Attributes](#class-attributes), which holds the foundation every site must extend in order to set up its own variables. Unless your site is extremely simple, it will require developers to extend this class and add further variables, for whom setters and getters must be defined!
-
-### Handling
-
-Once above steps are done, developers are finally able to handle requests into responses via *run* method of [FrontController](https://github.com/aherne/console-mvc/blob/master/src/FrontController.php), which:
-
-- detects [EventListeners\Start](#abstract-class-eventlisteners-start) listeners and executes them in order they were registered
-- encapsulates [configuration](#configuration) XML file into [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) object
-- detects [EventListeners\Application](#abstract-class-eventlisteners-application) listeners and executes them in order they were registered
-- encapsulates request information (environment info, machine info, request info) into [Request](#class-request) object
-- detects [EventListeners\Request](#abstract-class-eventlisteners-request) listeners and executes them in order they were registered
-- initializes empty [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) based on information detected above from request or XML
-- locates [Controller](#abstract-class-controller) based on information already detected and, if found, executes it in order to bind models to views
-- locates [Lucinda\MVC\ViewResolver](https://github.com/aherne/mvc#abstract-class-viewresolver) based on information already detected and executes it in order to feed response body based on view
-- detects [EventListeners\Response](#abstract-class-eventlisteners-response) listeners and executes them in order they were registered
-- sends [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) back to caller, containing headers and body
-- detects [EventListeners\End](#abstract-class-eventlisteners-end) listeners and executes them in order they were registered
-
-All components that are in developers' responsibility ([Controller](#abstract-class-controller), [Lucinda\MVC\ViewResolver](https://github.com/aherne/mvc#abstract-class-viewresolver), along with event listeners themselves, implement [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php) interface.
+1. package purpose
+2. installation
+3. request lifecycle
+4. XML configuration
+5. integration example
+6. main runtime contracts
+7. exceptions and constraints
+8. testing
 
 ## Installation
 
-First choose a folder, then write this command there using console:
-
-```console
+```bash
 composer require lucinda/console-mvc
 ```
 
-Rename folder above to DESTINATION_FOLDER then create a *configuration.xml* file holding configuration settings (see [configuration](#configuration) above) and a *index.php* file (see [initialization](#initialization) above) in project root with following code:
+Package requirements:
+
+- PHP `^8.1`
+- `ext-simplexml`
+- `lucinda/abstract_mvc` `^3.0`
+
+## What The Package Does
+
+The package currently exposes these runtime entry points:
+
+- `Lucinda\ConsoleSTDOUT\FrontController`: orchestrates the console MVC flow.
+- `Lucinda\ConsoleSTDOUT\Application`: thin extension of the base MVC application parser.
+- `Lucinda\ConsoleSTDOUT\Request`: reads the console route, extra arguments, OS, current user, and `php://input`.
+- `Lucinda\ConsoleSTDOUT\Request\Validator`: validates the route and output format against XML configuration.
+- `Lucinda\ConsoleSTDOUT\RouteNotFoundException`: thrown when the requested route does not exist.
+
+## Request Lifecycle
+
+`FrontController::run()` performs the following steps:
+
+1. runs `START` event listeners from the provided `EventScheduler`
+2. loads the XML application configuration
+3. runs `APPLICATION` listeners
+4. builds a `Request` from `$_SERVER["argv"]`
+5. validates route and format through `Request\Validator`
+6. runs `REQUEST` listeners
+7. creates a console response
+8. runs the configured controller for the matched route, if one exists
+9. resolves the selected view through the configured resolver, if a view is available
+10. applies `RESPONSE` listeners that implement `Lucinda\MVC\Response\Transformer\Body`
+11. writes the response to STDOUT
+12. runs `END` listeners
+
+If a `Lucinda\MVC\TerminationException` is thrown anywhere in the flow, its embedded response is rendered immediately.
+
+## Configuration
+
+The constructor expects the path to an XML entry file:
 
 ```php
-$controller = new Lucinda\ConsoleSTDOUT\FrontController("configuration.xml", new Attributes("application/events"));
-// TODO: add event listeners here
-$controller->run();
+new FrontController($xmlPath, $eventScheduler);
 ```
 
-## Running Requests
-
-Now that you have installed project on your machine, go to DESTINATION_FOLDER, open console/terminal and write:
-
-```console
-php index.php ROUTE PARAM1 PARAM2 ...
-```
-
-Where:
-
-- ROUTE: route to be handled (must be matched with a **[route](#routes)** XML subtag)
-- PARAM1, ...: parameters to send to route, accessible in controllers/listeners as: *$this->request->parameters*
-
-## Unit Tests
-
-For tests and examples, check following files/folders in API sources:
-
-- [test.php](https://github.com/aherne/console-mvc/blob/master/test.php): runs unit tests in console
-- [unit-tests.xml](https://github.com/aherne/console-mvc/blob/master/unit-tests.xml): sets up unit tests and mocks "loggers" tag
-- [tests](https://github.com/aherne/console-mvc/blob/master/tests): unit tests for classes from [src](https://github.com/aherne/console-mvc/blob/master/src) folder
-
-## Reference Guide
-
-These classes are fully implemented by API:
-
-- [Request](#class-request): encapsulates request information (route, parameters, user info, etc.)
-    - [Request\UserInfo](#class-request-userinfo): encapsulates information about console user that made request
-
-Apart of classes mentioned in **[binding events](#binding-events)**, following abstract classes require to be extended by developers in order to gain an ability:
-
-- [Controller](#abstract-class-controller): encapsulates binding [Request](#class-request) to [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) based on user request and XML info
-
-### Class Request
-
-Class [Request](https://github.com/aherne/console-mvc/blob/master/src/Request.php) encapsulates information detected about user request based on superglobals ($\_SERVER, $\_GET, $\_POST, $\_FILES) and defines following public methods relevant to developers:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| getRoute | void | string | Gets first console argument received by API. See [execution](#execution) above! |
-| getInputStream | void | string | Gets access to input stream for binary requests. |
-| parameters | void | array | Gets all console arguments received by API, minus first (route). See [execution](#execution) above! |
-| parameters | int $position | mixed | Gets value of console arguments by position. |
-| getOperatingSystem | void | string | Gets operating system name API is running into. |
-| getUserInfo | void | [Request\UserInfo](#class-request-userinfo) | Gets information about *user* that made request. |
-
-### Class Request UserInfo
-
-Class [Request\UserInfo](https://github.com/aherne/console-mvc/blob/master/src/Request/UserInfo.php) encapsulates information detected about user that made request and defines following public methods relevant to developers:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| getName | void | string | Gets requester user name |
-| isSuper | void | bool | Gets whether or not requester is a superuser/root |
-
-### Abstract Class EventListeners Start
-
-Abstract class [EventListeners\Start](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Start.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute BEFORE [configuration](#configuration) XML is read.
-
-Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data where custom attributes should be set. |
-
-A common example of a START listener is the need to set start time, in order to benchmark duration of handling later on:
-
-```php
-class StartBenchmark extends Lucinda\ConsoleSTDOUT\EventListeners\Start
-{
-    public function run(): void
-    {
-        // you will first need to extend Application and add: setStartTime, getStartTime
-        $this->attributes->setStartTime(microtime(true));
-    }
-}
-```
-
-### Abstract Class EventListeners Application
-
-Abstract class [EventListeners\Application](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Application.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [configuration](#configuration) XML is read.
-
-Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $application | [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) | Gets application information detected from XML. |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data where custom attributes should be set. |
-
-TODO: usage example
-
-### Abstract Class EventListeners Request
-
-Abstract class [EventListeners\Request](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Request.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [Request](#class-request) object is created.
-
-Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $application | [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) | Gets application information detected from XML. |
-| $request | [Request](#class-request) | Gets request information. |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data where custom attributes should be set. |
-
-TODO: usage example
-
-### Abstract Class EventListeners Response
-
-Abstract class [EventListeners\Response](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/Response.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) body was set but before it's committed back to caller.
-
-Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $application | [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) | Gets application information detected from XML. |
-| $request | [Request](#class-request) | Gets request information. |
-| $response | [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) | Gets access to object based on which response can be manipulated. |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data where custom attributes should be set. |
-
-TODO: usage example
-
-### Abstract Class EventListeners End
-
-Abstract class [EventListeners\End](https://github.com/aherne/console-mvc/blob/master/src/EventListeners/End.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) and listens to events that execute AFTER [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) was rendered back to caller.
-
-Developers need to implement a *run* method, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $application | [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) | Gets application information detected from XML. |
-| $request | [Request](#class-request) | Gets request information. |
-| $response | [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) | Gets access to object based on which response can be manipulated. |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data where custom attributes should be set. |
-
-A common example of a START listener is the need to set end time, in order to benchmark duration of handling:
-
-```php
-class EndBenchmark extends Lucinda\ConsoleSTDOUT\EventListeners\End
-{
-    public function run(): void
-    {
-        $benchmark = new Benchmark();
-        $benchmark->save($this->attributes->getStartTime(), microtime(true));
-    }
-}
-```
-
-### Abstract Class Controller
-
-Abstract class [Controller](https://github.com/aherne/console-mvc/blob/master/src/Controller.php) implements [Runnable](https://github.com/aherne/console-mvc/blob/master/src/Runnable.php)) to set up response (views in particular) by binding information detected beforehand to models. It defines following public method relevant to developers:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| run | void | void | Inherited prototype to be implemented by developers to set up response based on information saved by constructor |
-
-Developers need to implement *run* method for each controller, where they are able to access following protected fields injected by API via constructor:
-
-| Field | Type | Description |
-| --- | --- | --- |
-| $application | [Lucinda\MVC\Application](https://github.com/aherne/mvc#class-application) | Gets application information detected from XML. |
-| $request | [Request](#class-request) | Gets request information. |
-| $response | [Lucinda\MVC\Response](https://github.com/aherne/mvc#class-response) | Gets access to object based on which response can be manipulated. |
-| $attributes | [Attributes](#class-attributes) | Gets access to object encapsulating data set by event listeners beforehand. |
-
-TODO: usage example
-
-To understand more about how controllers are detected, check [specifications](#how-are-controllers-located)!
-
-### Class Attributes
-
-Class [Attributes](https://github.com/aherne/console-mvc/blob/master/src/Attributes.php) encapsulates data collected throughout request-response cycle, each corresponding to a getter and a setter, and made available to subsequent event listeners or controllers. API already comes with following:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| getValidFormat | void | string | Gets final response format to use |
-| getValidRoute | void | string | Gets final route requested |
-
-Most of the data collected will need to be set by developers themselves to fit their project demands so in 99% of cases class will need to be extended for each project!
-
-TODO: usage example
-
-## Specifications
-
-Since this API works on top of [Abstract MVC API](https://github.com/aherne/mvc) specifications it follows their requirements and adds extra ones as well:
-
-- [How Is Response Format Detected](#how-is-response-format-detected)
-- [How Are View Resolvers Located](#how-are-view-resolvers-located)
-- [How Is Route Detected](#how-is-route-detected)
-- [How Are Controllers Located](#how-are-controllers-located)
-- [How Are Request Parameters Detected](#how-are-request-parameters-detected)
-- [How Are Views Located](#how-are-views-located)
-
-### How Is Response Format Detected
-
-This section follows parent API [specifications](https://github.com/aherne/mvc#how-is-response-format-detected) only that routes are detected based on value of *$_SERVER["REQUEST_URI"]*.
-
-### How Are View Resolvers Located
-
-This section follows parent API [specifications](https://github.com/aherne/mvc#how-are-view-resolvers-located) in its entirety.
-
-### How Is Route Detected
-
-This section follows parent API [specifications](https://github.com/aherne/mvc#how-are-view-resolvers-located) only that routes are detected based on first argument received by API in console request. 
-
-```console
-php index.php ROUTE PARAM1 PARAM2 ...
-```
-
-Let's take this XML for example:
+That entry file should reference the same three MVC sections exercised by the test fixtures:
 
 ```xml
-<application default_route="index" ...>
-	...
-</application>
-<routes>
-    <route id="index" .../>
-    <route id="users" .../>
-</routes>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <application ref="application"/>
+  <resolvers ref="resolvers"/>
+  <routes ref="routes"/>
+</xml>
 ```
 
-There will be following situations for above:
+### Application
 
-| If Route Requested | Then Route ID Detected | Description |
-| --- | --- | --- |
-|  | index | Because requested route came empty, that identified by *default_route* is used |
-| users | users | Because requested route is matched to a route, specific route is used |
-| hello | - | Because no route is found matching the one requested a [RouteNotFoundException](https://github.com/aherne/console-mvc/blob/master/src/RouteNotFoundException.php) is thrown |
+`application.xml` defines the defaults used during validation and view lookup. The active tests use:
 
-### How Are Controllers Located
-
-This section follows parent API [specifications](https://github.com/aherne/mvc#how-are-controllers-located) only that class defined as *controller* attribute in [route](#routes) tag must extend [Controller](#abstract-class-controller).
-
-### How Are Request Parameters Detected
-
-Users are able to send one or more request parameters in API request:
-
-```console
-php index.php ROUTE PARAM1 PARAM2 ...
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <application
+    default_format="txt"
+    default_route="index"
+    views_folder="tests/fixtures/views"
+    views_extension="txt"
+    version="1.0.0"
+  />
+</xml>
 ```
 
-Then query in controllers/event-listeners those parameters via:
+Key points enforced by the current code:
+
+- when no route argument is provided, `default_route` is used
+- the selected output format starts from `default_format`
+- views are located through the underlying MVC package using `views_folder` and `views_extension`
+
+### Resolvers
+
+Resolvers map an output format to a view resolver class:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <resolvers>
+    <resolver format="txt" class="App\Resolvers\TextResolver"/>
+  </resolvers>
+</xml>
+```
+
+The resolved class is instantiated through dependency injection and used to convert a `Lucinda\MVC\Response\View` into the response body.
+
+### Routes
+
+Routes map CLI route names to controllers, views, and optional per-route formats:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml>
+  <routes>
+    <route id="index" view="index"/>
+    <route id="users" controller="App\Controllers\UsersController" view="users"/>
+    <route id="export" controller="App\Controllers\ExportController" view="export" format="json"/>
+  </routes>
+</xml>
+```
+
+Current validation rules:
+
+- the route is read from `$_SERVER["argv"][1]`
+- extra CLI arguments start at `$_SERVER["argv"][2]`
+- an empty route falls back to `default_route`
+- an unknown route throws `RouteNotFoundException`
+- an unknown format throws `Lucinda\MVC\ConfigurationException`
+
+## Integration Example
+
+This example matches the current constructor and event binding approach used by the repository’s runnable fixture:
 
 ```php
-$parameters = $this->request->parameters();
+<?php
+
+require __DIR__."/vendor/autoload.php";
+
+use Lucinda\ConsoleSTDOUT\FrontController;
+use Lucinda\MVC\EventScheduler;
+use Lucinda\MVC\EventType;
+use App\EventListeners\StartListener;
+use App\EventListeners\ApplicationListener;
+use App\EventListeners\RequestListener;
+use App\EventListeners\EndListener;
+
+$scheduler = new EventScheduler();
+$scheduler->add(EventType::START, StartListener::class);
+$scheduler->add(EventType::APPLICATION, ApplicationListener::class);
+$scheduler->add(EventType::REQUEST, RequestListener::class);
+$scheduler->add(EventType::END, EndListener::class);
+
+$frontController = new FrontController(__DIR__."/console.xml", $scheduler);
+$frontController->run();
 ```
 
-If original request was:
+Run it from the shell like this:
 
-```console
-php index.php users hello world
+```bash
+php index.php users 42
 ```
 
-Then route will be "users" and parameters will be ["hello", "world"]!
+In that command:
 
-### How Are Views Located
+- `users` becomes the route
+- `42` is available as the first request parameter
 
-This section follows parent API [specifications](https://github.com/aherne/mvc#how-are-views-located) in its entirety. Extension is yet to be decided, since it depends on type of view resolved!
+## Main Contracts
+
+### `Request`
+
+`Lucinda\ConsoleSTDOUT\Request` is immutable after construction and exposes:
+
+- `getRoute(): string`
+- `parameters(int $index = -1): array|string|null`
+- `getOperatingSystem(): string`
+- `getUserInfo(): Lucinda\ConsoleSTDOUT\Request\UserInfo`
+- `getInputStream(): string`
+
+`parameters()` returns all CLI parameters when called without an index, or a single parameter by position when an index is provided.
+
+### `Request\UserInfo`
+
+`Lucinda\ConsoleSTDOUT\Request\UserInfo` exposes:
+
+- `getName(): string`
+- `isSuper(): bool`
+
+User detection is OS-sensitive:
+
+- on POSIX systems, the username prefers `posix_getpwuid(posix_geteuid())`
+- otherwise it falls back to `$_SERVER["USER"]` and then `get_current_user()`
+- superuser detection is `root` on non-Windows systems
+- on Windows, admin detection relies on `shell_exec("net session")`
+
+### Controllers And Resolvers
+
+The front controller works with contracts from `lucinda/abstract_mvc`:
+
+- route controllers are instantiated from the XML `controller` class
+- if a controller implements `Lucinda\MVC\Controller\ViewAware`, its `run()` return value is used as the filled view
+- resolvers are instantiated from the XML `resolver` class
+- response transformers are taken from `RESPONSE` events only when the listener implements `Lucinda\MVC\Response\Transformer\Body`
+
+## Exceptions And Constraints
+
+- `Request` throws `Lucinda\MVC\ConfigurationException` if the process was not started from a CLI context with `$_SERVER["argv"]`
+- `Request\Validator` throws `RouteNotFoundException` when the route is missing from `<routes>`
+- `Request\Validator` throws `Lucinda\MVC\ConfigurationException` when the resolved format is missing from `<resolvers>`
+- `FrontController` catches `Lucinda\MVC\TerminationException` and renders its response directly
+
+Practical constraints from the current implementation:
+
+- the route always comes from the first CLI argument
+- parameter parsing is positional only
+- this package does not define its own event listener base classes; scheduling relies on `Lucinda\MVC\EventScheduler`
+- `RESPONSE` listeners are not executed generically; only body transformers affect the response in this package
+
+## Testing
+
+Run the repository tests with:
+
+```bash
+php test.php
+```
+
+The active test suite covers:
+
+- request parsing
+- route and format validation
+- route-not-found behavior
+- front controller lifecycle and event ordering
+

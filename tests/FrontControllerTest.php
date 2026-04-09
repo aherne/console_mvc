@@ -14,7 +14,7 @@ class FrontControllerTest
         $command = sprintf(
             "FC_EVENT_LOG=%s php %s %s %s %s",
             escapeshellarg($logFile),
-            escapeshellarg(__DIR__."/../tools/front_controller_runner.php"),
+            escapeshellarg(dirname(__DIR__)."/front_controller_tester.php"),
             escapeshellarg(__DIR__."/fixtures/front-controller.xml"),
             escapeshellarg("test"),
             escapeshellarg("world")
