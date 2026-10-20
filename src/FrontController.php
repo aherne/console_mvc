@@ -85,7 +85,7 @@ class FrontController implements Runnable
             $view = $viewDetector->getView();
 
             // resolves view into response body, unless output stream has been written to already
-            if ($view !== false) {
+            if ($view !== null) {
                 $this->runViewResolver($responseInfoDetector->getResolver(), $response, $view);
             }
 

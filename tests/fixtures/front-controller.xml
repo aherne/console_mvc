@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <xml>
-  <application ref="tests/fixtures/front-controller/application"/>
-  <resolvers ref="tests/fixtures/front-controller/resolvers"/>
-  <routes ref="tests/fixtures/front-controller/routes"/>
+  <application ref="front-controller/application"/>
+  <resolvers ref="front-controller/resolvers"/>
+  <routes ref="front-controller/routes"/>
 </xml>
